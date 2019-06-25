@@ -39,7 +39,9 @@ public class MainForm {
 	private JTable tableEmployees, tablePatients, tableReceptionist, tableAppointment;
 	
 	private static JTabbedPane tabbedPanes;
-	private static JPanel panelManageEmployees, panelManagePatient, panelManageAppointment,  panelManageReceptionist;
+	private static JPanel panelManagePatient, panelManageAppointment,  panelManageReceptionist;
+	
+	private static EmployeeTabGUI panelManageEmployees;
 	
 	private Employee loggedinEmployee;
 	
@@ -123,82 +125,84 @@ public class MainForm {
 		frmHospitalManagementSystem.getContentPane().add(tabbedPanes);
 		
 		//Employee GUI
-		panelManageEmployees = new JPanel();
-		tabbedPanes.addTab("Employees", null, panelManageEmployees, null);
-		panelManageEmployees.setLayout(null);
+		panelManageEmployees = new EmployeeTabGUI();
 		
-		tableEmployees = new JTable();
-		tableEmployees.setBounds(10, 11, 512, 354);
-		panelManageEmployees.add(tableEmployees);
-		
-		JLabel lblEmpFirstName = new JLabel("First Name:");
-		lblEmpFirstName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpFirstName.setBounds(554, 30, 67, 16);
-		panelManageEmployees.add(lblEmpFirstName);
-		
-		JLabel lblEmpLastName = new JLabel("Last Name:");
-		lblEmpLastName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpLastName.setBounds(556, 74, 65, 16);
-		panelManageEmployees.add(lblEmpLastName);
-		
-		empFirstNameTxtBox = new JTextField();
-		empFirstNameTxtBox.setColumns(10);
-		empFirstNameTxtBox.setBounds(631, 30, 116, 22);
-		panelManageEmployees.add(empFirstNameTxtBox);
-		
-		empLastNameTxtBox = new JTextField();
-		empLastNameTxtBox.setColumns(10);
-		empLastNameTxtBox.setBounds(631, 74, 116, 22);
-		panelManageEmployees.add(empLastNameTxtBox);
-		
-		empGenderTxtBox = new JTextField();
-		empGenderTxtBox.setColumns(10);
-		empGenderTxtBox.setBounds(631, 119, 116, 22);
-		panelManageEmployees.add(empGenderTxtBox);
-		
-		JLabel lblEmpGender = new JLabel("Gender:");
-		lblEmpGender.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpGender.setBounds(567, 122, 54, 16);
-		panelManageEmployees.add(lblEmpGender);
-		
-		JLabel lblEmpDOB = new JLabel("Date of Birth:");
-		lblEmpDOB.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpDOB.setBounds(555, 168, 65, 16);
-		panelManageEmployees.add(lblEmpDOB);
-		
-		JLabel lblEmpPhoneNum = new JLabel("Phone Number:");
-		lblEmpPhoneNum.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpPhoneNum.setBounds(545, 207, 82, 16);
-		panelManageEmployees.add(lblEmpPhoneNum);
-		
-		empPhoneNumberTxtBox = new JTextField();
-		empPhoneNumberTxtBox.setColumns(10);
-		empPhoneNumberTxtBox.setBounds(631, 204, 116, 22);
-		panelManageEmployees.add(empPhoneNumberTxtBox);
-		
-		JLabel lblEmpEmail = new JLabel("E-Mail:");
-		lblEmpEmail.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpEmail.setBounds(569, 243, 32, 16);
-		panelManageEmployees.add(lblEmpEmail);
-		
-		empEmailTxtBox = new JTextField();
-		empEmailTxtBox.setColumns(10);
-		empEmailTxtBox.setBounds(620, 240, 116, 22);
-		panelManageEmployees.add(empEmailTxtBox);
-		
-		JLabel lblEmpAddress = new JLabel("Address:");
-		lblEmpAddress.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpAddress.setBounds(556, 286, 52, 16);
-		panelManageEmployees.add(lblEmpAddress);
-		
-		empAddrTxtBox = new JTextField();
-		empAddrTxtBox.setColumns(10);
-		empAddrTxtBox.setBounds(620, 283, 116, 22);
-		panelManageEmployees.add(empAddrTxtBox);
-		
-		JDateChooser empCal = new JDateChooser();
-		empCal.setBounds(631, 168, 100, 22);
-		panelManageEmployees.add(empCal);
+//		panelManageEmployees = new JPanel();
+//		tabbedPanes.addTab("Employees", null, panelManageEmployees, null);
+//		panelManageEmployees.setLayout(null);
+//		
+//		tableEmployees = new JTable();
+//		tableEmployees.setBounds(10, 11, 512, 354);
+//		panelManageEmployees.add(tableEmployees);
+//		
+//		JLabel lblEmpFirstName = new JLabel("First Name:");
+//		lblEmpFirstName.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpFirstName.setBounds(554, 30, 67, 16);
+//		panelManageEmployees.add(lblEmpFirstName);
+//		
+//		JLabel lblEmpLastName = new JLabel("Last Name:");
+//		lblEmpLastName.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpLastName.setBounds(556, 74, 65, 16);
+//		panelManageEmployees.add(lblEmpLastName);
+//		
+//		empFirstNameTxtBox = new JTextField();
+//		empFirstNameTxtBox.setColumns(10);
+//		empFirstNameTxtBox.setBounds(631, 30, 116, 22);
+//		panelManageEmployees.add(empFirstNameTxtBox);
+//		
+//		empLastNameTxtBox = new JTextField();
+//		empLastNameTxtBox.setColumns(10);
+//		empLastNameTxtBox.setBounds(631, 74, 116, 22);
+//		panelManageEmployees.add(empLastNameTxtBox);
+//		
+//		empGenderTxtBox = new JTextField();
+//		empGenderTxtBox.setColumns(10);
+//		empGenderTxtBox.setBounds(631, 119, 116, 22);
+//		panelManageEmployees.add(empGenderTxtBox);
+//		
+//		JLabel lblEmpGender = new JLabel("Gender:");
+//		lblEmpGender.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpGender.setBounds(567, 122, 54, 16);
+//		panelManageEmployees.add(lblEmpGender);
+//		
+//		JLabel lblEmpDOB = new JLabel("Date of Birth:");
+//		lblEmpDOB.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpDOB.setBounds(555, 168, 65, 16);
+//		panelManageEmployees.add(lblEmpDOB);
+//		
+//		JLabel lblEmpPhoneNum = new JLabel("Phone Number:");
+//		lblEmpPhoneNum.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpPhoneNum.setBounds(545, 207, 82, 16);
+//		panelManageEmployees.add(lblEmpPhoneNum);
+//		
+//		empPhoneNumberTxtBox = new JTextField();
+//		empPhoneNumberTxtBox.setColumns(10);
+//		empPhoneNumberTxtBox.setBounds(631, 204, 116, 22);
+//		panelManageEmployees.add(empPhoneNumberTxtBox);
+//		
+//		JLabel lblEmpEmail = new JLabel("E-Mail:");
+//		lblEmpEmail.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpEmail.setBounds(569, 243, 32, 16);
+//		panelManageEmployees.add(lblEmpEmail);
+//		
+//		empEmailTxtBox = new JTextField();
+//		empEmailTxtBox.setColumns(10);
+//		empEmailTxtBox.setBounds(620, 240, 116, 22);
+//		panelManageEmployees.add(empEmailTxtBox);
+//		
+//		JLabel lblEmpAddress = new JLabel("Address:");
+//		lblEmpAddress.setFont(new Font("Tahoma", Font.PLAIN, 10));
+//		lblEmpAddress.setBounds(556, 286, 52, 16);
+//		panelManageEmployees.add(lblEmpAddress);
+//		
+//		empAddrTxtBox = new JTextField();
+//		empAddrTxtBox.setColumns(10);
+//		empAddrTxtBox.setBounds(620, 283, 116, 22);
+//		panelManageEmployees.add(empAddrTxtBox);
+//		
+//		JDateChooser empCal = new JDateChooser();
+//		empCal.setBounds(631, 168, 100, 22);
+//		panelManageEmployees.add(empCal);
 		
 		//Patients GUI
 		panelManagePatient = new JPanel();
