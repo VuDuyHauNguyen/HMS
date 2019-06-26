@@ -1,11 +1,21 @@
 package Entity;
 
-import java.sql.Date;
+
+import java.util.Date;
+import java.util.Vector;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 //+------------+--------------+------+-----+---------+----------------+
 //| Field      | Type         | Null | Key | Default | Extra          |
 //+------------+--------------+------+-----+---------+----------------+
-//| employeeId | int(11)      | NO   | PRI | NULL    | auto_increment |
+//| id         | int(11)      | NO   | PRI | NULL    | auto_increment |
 //| firstName  | varchar(50)  | YES  |     | NULL    |                |
 //| lastName   | varchar(50)  | YES  |     | NULL    |                |
 //| gender     | char(1)      | YES  |     | NULL    |                |
@@ -18,16 +28,22 @@ import java.sql.Date;
 //| password   | varchar(50)  | YES  |     | NULL    |                |
 //+------------+--------------+------+-----+---------+----------------+
 
+@Entity
+@Table(name="employees")
 public class Employee {
 	public final static int ADMIN_ROLE 			= 1;
 	public final static int RECEPTIONIST_ROLE 	= 2;
 	public final static int DOCTOR_ROLE 		= 3;
 	public final static int TECHNOLOGIST_ROLE 	= 4;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private byte role, status;
 	private String firstName, lastName, phone, email, address, password;
 	private char gender;
+	
+	@Temporal(TemporalType.DATE)
 	private Date dob;
 	
 	public int getId() {
@@ -97,4 +113,20 @@ public class Employee {
 		this.dob = dob;
 	}
 	
+	public Vector getVector() {
+		Vector v = new Vector();
+		v.add(id);
+		v.add(role);
+		v.add(status);
+		v.add(firstName);
+		v.add(lastName);
+		v.add(dob);
+		v.add(gender);
+		v.add(email);
+		v.add(phone);
+		v.add(address);
+		v.add(password);
+		
+		return v;
+	}
 }

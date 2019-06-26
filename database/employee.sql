@@ -5,7 +5,7 @@
  * status: -1 = disable, 1 = active
  */
 create table employees (
-	employeeId INT AUTO_INCREMENT PRIMARY KEY,
+	id INT AUTO_INCREMENT PRIMARY KEY,
 	firstName VARCHAR(50),
 	lastName VARCHAR(50),
 	gender CHAR(1), 

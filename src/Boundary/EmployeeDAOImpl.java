@@ -1,171 +1,191 @@
 package Boundary;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import Entity.Employee;
 
 public class EmployeeDAOImpl {
-
-	private String dsn = "jdbc:mysql://localhost/hms_db";
-	private String username = "root";
-	private String password = "";
 	
-	private Connection conn = null;
-	private ResultSet rs = null;
-	private Statement stmt = null;
-	private PreparedStatement pstmt = null;
-	
-	public void connectDB()	{
-		//Connect to the Database
+	//CREATE
+	public int addEmployee(Employee e) {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		Integer employeeId = -1;
+		
 		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
 			
-			//Connect to the database with the proper info
-			this.conn = DriverManager.getConnection(dsn, username, password);
+			//create an employee
+			employeeId = (Integer) sx.save(e);
 			
-			if (this.conn.isClosed()) {
-				System.out.println("Database connection was not establsiehd");
-			} else {
-				System.out.println("Database connection established");
-			}
+			tx.commit();
 			
-		} catch (SQLException sx) {
-			System.out.println("Error Connecting to Database");
-			System.out.println(sx.getMessage());
-			System.out.println(sx.getErrorCode());
-			System.out.println(sx.getSQLState());
-			
-		}
-	}
-	
-	public void disconnectDB()	{
-		//Disconnect
-		try {
-			//disconnect from the database
-			this.conn.close();
-			
-			if (conn.isClosed()) {
-				System.out.println("Database connection closed");
-			} else {
-				System.out.println("There was a problem disconnecting from the database!");
-			}
-		} catch (SQLException sx) {
-			System.out.println("Error Connecting to Database");
-			System.out.println(sx.getMessage());
-			System.out.println(sx.getErrorCode());
-			System.out.println(sx.getSQLState());
-			
+		}catch(HibernateException hx) {
+			if(tx != null) tx.rollback();
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
 		}
 		
+		return employeeId;
 	}
 	
-	
+	//GET an employee by id
 	public Employee getEmployeeById(int id) {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
 		
-		Employee s = null; 
-		
-		String sql = "SELECT * FROM employees WHERE id = ?";
+		Employee employee = null;
 		
 		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
 			
-			//Connect to the database
-			connectDB();
+			//get employee
+			employee = sx.get(Employee.class, id);
 			
-			//Create the statement
-			pstmt = conn.prepareStatement(sql);
-			
-			//Declare the parameter (starting at 1)
-			pstmt.setInt(1,id);
-			
-			rs = pstmt.executeQuery();
-			
-			while (rs.next())	{
-				//if found
-				s = new Employee();
-				
-				s.setId(rs.getInt("employeeId"));
-				s.setFirstName(rs.getString("firstName"));
-				s.setLastName(rs.getString("lastName"));
-				s.setGender((char)rs.getByte("gender"));
-				s.setDob(rs.getDate("dob"));
-				s.setPhone(rs.getString("phone"));
-				s.setEmail(rs.getString("email"));
-				s.setAddress(rs.getString("address"));
-				s.setRole(rs.getByte("role"));
-				s.setStatus(rs.getByte("status"));
-				s.setPassword(rs.getString("password"));
-				
-				
-			} 
-			
-			disconnectDB();
-				
-			} catch (SQLException sx) {
-				System.out.println("Error Connecting to Database");
-				System.out.println(sx.getMessage());
-				System.out.println(sx.getErrorCode());
-				System.out.println(sx.getSQLState());
-				
-			}
-			
-			return s;
-			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
 		}
+		
+		return employee;
+	}
 	
+	//GET an employee by email
 	public Employee getEmployeeByEmail(String email) {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
 		
-		Employee s = null; 
-		
-		String sql = "SELECT * FROM employees WHERE email = ?";
+		List<Employee> employees = null;
 		
 		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
 			
-			//Connect to the database
-			connectDB();
+			//get employees have matched email
+			//assume email is unique before creating an employee
+			employees = (ArrayList<Employee>) 
+					sx.createQuery("FROM Employee E WHERE E.email = '" + email+"'").list(); 
 			
-			//Create the statement
-			pstmt = conn.prepareStatement(sql);
-			
-			//Declare the parameter (starting at 1)
-			pstmt.setString(1, email);
-			
-			rs = pstmt.executeQuery();
-			
-			while (rs.next())	{
-				//if found
-				s = new Employee();
-				
-				s.setId(rs.getInt("employeeId"));
-				s.setFirstName(rs.getString("firstName"));
-				s.setLastName(rs.getString("lastName"));
-				s.setGender((char)rs.getByte("gender"));
-				s.setDob(rs.getDate("dob"));
-				s.setPhone(rs.getString("phone"));
-				s.setEmail(rs.getString("email"));
-				s.setAddress(rs.getString("address"));
-				s.setRole(rs.getByte("role"));
-				s.setStatus(rs.getByte("status"));
-				s.setPassword(rs.getString("password"));
-				
-				
-			} 
-			
-			disconnectDB();
-				
-			} catch (SQLException sx) {
-				System.out.println("Error Connecting to Database");
-				System.out.println(sx.getMessage());
-				System.out.println(sx.getErrorCode());
-				System.out.println(sx.getSQLState());
-				
-			}
-			
-			return s;
-			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
 		}
+		
+		//return the matched employee, else return null
+		return employees.size() == 1? employees.get(0) : null;
+	}
+	
+	//GET all employees
+	public ArrayList<Employee> getAllEmployees() {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		ArrayList<Employee> employees = null;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//get all employees
+			employees = (ArrayList<Employee>) 
+					sx.createQuery("FROM Employee").list(); 
+			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		//return employees
+		return employees;
+	}
+	
+	//UPDATE 
+	public boolean updateEmployee(Employee e) {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		boolean result = true;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//update an employee
+			sx.update(e);
+			
+			tx.commit();
+			
+		}catch(HibernateException hx) {
+			if(tx != null) tx.rollback();
+			result = false;
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		return result;
+	}
+	
+	//DELETE 
+	public boolean deleteEmployee(Employee e) {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		boolean result = true;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//update an employee
+			sx.delete(e);
+			
+			tx.commit();
+			
+		}catch(HibernateException hx) {
+			if(tx != null) tx.rollback();
+			result = false;
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		return result;
+	}
 	
 }
