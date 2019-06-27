@@ -1,9 +1,9 @@
-
 /*
- * gender: f; m
- * role: 1 = admin; 2 = receptionist; 3 = doctor; 4 = technologist
+ * gender: f, m
+ * role: 1 = admin, 2 = receptionist, 3 = doctor, 4 = technologist
  * status: -1 = disable, 1 = active
  */
+drop table if exists employees;
 create table employees (
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	firstName VARCHAR(50),
@@ -17,8 +17,6 @@ create table employees (
 	status TINYINT,
     password VARCHAR(50)
 );
-
-/*INSERT TEST DATA*/
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Doctor', 'Boucher', 'f', '1977-04-12', '208-982-2375', 'doctor@hospital.com', '245 Brickson Park Lane', 3, 1, 'hospital');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Admin', 'Hospital', 'm', '1961-05-19', '750-970-9083', 'admin@hospital.com', '10023 Kim Road', 1, 1, 'hospital');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Technologist', 'Gilchriest', 'f', '1987-01-30', '106-804-7722', 'technologist@hospital.com', '34 Farwell Avenue', 4, 1, 'hospital');

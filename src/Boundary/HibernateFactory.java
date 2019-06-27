@@ -1,6 +1,9 @@
 package Boundary;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -23,5 +26,36 @@ public class HibernateFactory {
 		}
 		
 		return factory;
+	}
+	
+	//Initialize database by execute sql files in database folder
+	public static void initializeDatabase() {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		try {
+			fx = getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			String sql = FileHelper.readFile("./database/employee.sql");
+			sql = sql.replace("\n", "").replace("\r", "");//remove new line
+			
+			//execute each SQL statement
+			for(String command : sql.split(";")) 
+				sx.createNativeQuery(command + ";").executeUpdate();
+			
+			tx.commit();
+			
+		}catch(HibernateException hx) {
+			if(tx != null) tx.rollback();
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
 	}
 }
