@@ -3,38 +3,116 @@ package Boundary;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
+import Entity.Employee;
+
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 public class EmployeeTabGUI extends JPanel {
 
 	private JTable tableEmployees;
 	
 	private JTextField empFirstNameTxtBox, empLastNameTxtBox, 
-		empPhoneNumberTxtBox, empEmailTxtBox;   
+		empPhoneNumberTxtBox, empEmailTxtBox, empIdTxtBox, empPasswordTxtBox;   
+	
+	private JTextArea empAddressTxtArea;
 	
 	private JDateChooser empDob;
-	private JTextField empIdTxtBox;
-	private JTextField empPasswordTxtBox;
+	
+	private JComboBox comboBoxGender, comboBoxRole;
+	
+	private DefaultTableModel tm;
+	
+	private ListSelectionListener lsl;
+	
+	private EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
+	
+	private void updateTable() {
+		//remove listener
+		tableEmployees.getSelectionModel().removeListSelectionListener(lsl);
+		
+		tm = new DefaultTableModel();
+		
+		//set the columns
+		tm.addColumn("Id");
+		tm.addColumn("Role");
+		tm.addColumn("Status");
+		tm.addColumn("First Name");
+		tm.addColumn("Last Name");
+		tm.addColumn("DOB");
+		tm.addColumn("Gender");
+		tm.addColumn("Email");
+		tm.addColumn("Phone");
+		tm.addColumn("Address");
+		tm.addColumn("Password");
+
+		//get all employees
+		ArrayList<Employee> employees = employeeDAO.getAllEmployees();
+		
+		for(Employee e : employees)
+			tm.addRow(e.getVector());
+		
+		tableEmployees.setModel(tm);
+		
+		//add listener
+		tableEmployees.getSelectionModel().addListSelectionListener(lsl);
+		
+		tableEmployees.setRowSorter(new TableRowSorter(tm));
+	}
 	
 	/**
 	 * Create the panel.
 	 */
 	public EmployeeTabGUI() {
 		setLayout(null);
+		
+		//create lsl
+		lsl = new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// TODO Auto-generated method stub
+				int currId = (int) tableEmployees.getValueAt(tableEmployees.getSelectedRow(), 0);//1st column
+				
+				//get the employee
+				Employee emp = employeeDAO.getEmployeeById(currId);
+				
+				empIdTxtBox.setText(emp.getId() + "");
+				empFirstNameTxtBox.setText(emp.getFirstName());
+				empLastNameTxtBox.setText(emp.getLastName());
+				empDob.setDate(emp.getDob());
+				empPhoneNumberTxtBox.setText(emp.getPhone());
+				empAddressTxtArea.setText(emp.getAddress());
+				empEmailTxtBox.setText(emp.getEmail());
+				empPasswordTxtBox.setText(emp.getPassword());
+				
+			}
+		};
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(10, 11, 512, 354);
+		add(scrollPane);
 				
 		tableEmployees = new JTable();
-		tableEmployees.setBounds(10, 11, 512, 354);
-		add(tableEmployees);
+		scrollPane.setViewportView(tableEmployees);
 		
 		JLabel lblEmpId = new JLabel("Id:");
 		lblEmpId.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -82,8 +160,6 @@ public class EmployeeTabGUI extends JPanel {
 		add(lblEmpEmail);
 		
 		empEmailTxtBox = new JTextField();
-		empEmailTxtBox.setEditable(false);
-		empEmailTxtBox.setEnabled(false);
 		empEmailTxtBox.setColumns(10);
 		empEmailTxtBox.setBounds(624, 268, 116, 22);
 		add(empEmailTxtBox);
@@ -97,13 +173,12 @@ public class EmployeeTabGUI extends JPanel {
 		empDob.setBounds(624, 146, 116, 22);
 		add(empDob);
 		
-		JComboBox comboBoxGender = new JComboBox();
+		comboBoxGender = new JComboBox();
 		comboBoxGender.setBounds(624, 121, 116, 20);
 		add(comboBoxGender);
 		
 		empIdTxtBox = new JTextField();
 		empIdTxtBox.setEditable(false);
-		empIdTxtBox.setEnabled(false);
 		empIdTxtBox.setBounds(624, 8, 44, 20);
 		add(empIdTxtBox);
 		empIdTxtBox.setColumns(10);
@@ -122,19 +197,42 @@ public class EmployeeTabGUI extends JPanel {
 		lblEmpRole.setBounds(549, 39, 74, 16);
 		add(lblEmpRole);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(624, 35, 116, 20);
-		add(comboBox);
+		comboBoxRole = new JComboBox();
+		comboBoxRole.setBounds(624, 35, 116, 20);
+		add(comboBoxRole);
 		
 		JButton btnAdd = new JButton("Add");
 		btnAdd.setBounds(549, 342, 89, 23);
+		btnAdd.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Employee emp =  new Employee();
+				
+				emp.setFirstName(empFirstNameTxtBox.getText());
+				emp.setLastName(empLastNameTxtBox.getText());
+				emp.setDob(empDob.getDate());
+				emp.setPhone(empPhoneNumberTxtBox.getText());
+				emp.setAddress(empAddressTxtArea.getText());
+				emp.setEmail(empEmailTxtBox.getText());
+				emp.setPassword(empPasswordTxtBox.getText());
+	
+				int newEmpId = employeeDAO.addEmployee(emp);
+				
+				if(newEmpId < 0) return;
+				
+				empIdTxtBox.setText(newEmpId + "");
+				
+				updateTable();
+			}
+		});
 		add(btnAdd);
 		
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.setBounds(651, 342, 89, 23);
 		add(btnUpdate);
 		
-		JTextArea empAddressTxtArea = new JTextArea();
+		empAddressTxtArea = new JTextArea();
 		empAddressTxtArea.setLineWrap(true);
 		empAddressTxtArea.setBounds(624, 207, 116, 50);
 		add(empAddressTxtArea);
@@ -149,5 +247,7 @@ public class EmployeeTabGUI extends JPanel {
 		empPasswordTxtBox.setBounds(624, 296, 116, 22);
 		add(empPasswordTxtBox);
 
+		//update table
+		updateTable();
 	}
 }

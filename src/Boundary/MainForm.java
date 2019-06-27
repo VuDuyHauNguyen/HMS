@@ -10,36 +10,18 @@ import javax.swing.SwingConstants;
 
 import Controller.Authentication;
 import Entity.Employee;
-import Controller.PatientValidation;
-
-import java.sql.Date;
 
 import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.Panel;
-import javax.swing.JCheckBox;
-import javax.swing.JList;
-import javax.swing.AbstractListModel;
-import javax.swing.JSpinner;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JMenu;
-import java.awt.Choice;
-import com.toedter.calendar.JDateChooser;
-import javax.swing.JTextArea;
 
 public class MainForm {
 	private static MainForm window;
 	
 	private JFrame frmHospitalManagementSystem;
-	private JTable tableEmployees, tablePatients, tableReceptionist, tableAppointment;
 	
 	private static JTabbedPane tabbedPanes;
-	private static JPanel panelManagePatient, panelManageAppointment,  panelManageReceptionist;
+	private static JPanel panelManagePatient, panelManageAppointment;
 	
 	private static EmployeeTabGUI panelManageEmployees;
 	
@@ -47,25 +29,6 @@ public class MainForm {
 	
 	//UI references
 	private JLabel lbUser;
-	private JTextField firstNameTxtBox;
-	private JTextField lastNameTxtBox;
-	private JTextField addrTxtBox;
-	private JTextField genderTxtBox;
-	private JTextField phoneNumTxtBox;
-	private JTextField emailTxtBox;
-	
-	private JTextField empFirstNameTxtBox;
-	private JTextField empLastNameTxtBox;
-	private JTextField empGenderTxtBox;
-	private JTextField empPhoneNumberTxtBox;
-	private JTextField empEmailTxtBox;
-	private JTextField empAddrTxtBox;	
-	private JLabel lblRecpDispID;
-	private JTextField appmntRecptID;
-	private JTable table;
-	private JTextField textField;
-	private JTextField recptIDTxtBox;
-
 
 	/**
 	 * Launch the application.
@@ -92,6 +55,9 @@ public class MainForm {
 	 * Create the application.
 	 */
 	public MainForm() {
+		//Initialize database by execute SQL commands from database folder 
+		HibernateFactory.initializeDatabase();
+		
 		initialize();
 	}
 
