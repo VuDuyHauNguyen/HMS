@@ -38,6 +38,8 @@ public class EmployeeTabGUI extends JPanel {
 	
 	private JComboBox comboBoxGender, comboBoxRole;
 	
+	private JCheckBox chckbxDisable;
+	
 	private DefaultTableModel tm;
 	
 	private ListSelectionListener lsl;
@@ -103,6 +105,27 @@ public class EmployeeTabGUI extends JPanel {
 				empEmailTxtBox.setText(emp.getEmail());
 				empPasswordTxtBox.setText(emp.getPassword());
 				
+				//update role
+				for(String role : Employee.ROLE_MAP.keySet()) {
+					if(Employee.ROLE_MAP.get(role) == emp.getRole()) {
+						comboBoxRole.setSelectedItem(role);
+						break;
+					}
+				}
+				
+				//update gender
+				for(String gender : Employee.GENDER_MAP.keySet()) {
+					if(Employee.GENDER_MAP.get(gender) == emp.getGender()) {
+						comboBoxGender.setSelectedItem(gender);
+						break;
+					}
+				}
+				
+				//update status
+				if(emp.getStatus() == Employee.STATUS_ENABLE)
+					chckbxDisable.setSelected(false);
+				else
+					chckbxDisable.setSelected(true);
 			}
 		};
 		
@@ -175,6 +198,9 @@ public class EmployeeTabGUI extends JPanel {
 		
 		comboBoxGender = new JComboBox();
 		comboBoxGender.setBounds(624, 121, 116, 20);
+		comboBoxGender.addItem("Unknown");
+		comboBoxGender.addItem("Female");
+		comboBoxGender.addItem("Male");
 		add(comboBoxGender);
 		
 		empIdTxtBox = new JTextField();
@@ -183,7 +209,7 @@ public class EmployeeTabGUI extends JPanel {
 		add(empIdTxtBox);
 		empIdTxtBox.setColumns(10);
 		
-		JCheckBox chckbxDisable = new JCheckBox("Disable");
+		chckbxDisable = new JCheckBox("Disable");
 		chckbxDisable.setBounds(673, 7, 67, 23);
 		add(chckbxDisable);
 		
@@ -199,6 +225,10 @@ public class EmployeeTabGUI extends JPanel {
 		
 		comboBoxRole = new JComboBox();
 		comboBoxRole.setBounds(624, 35, 116, 20);
+		comboBoxRole.addItem("Admin");
+		comboBoxRole.addItem("Receptionist");
+		comboBoxRole.addItem("Doctor");
+		comboBoxRole.addItem("Technologist");
 		add(comboBoxRole);
 		
 		JButton btnAdd = new JButton("Add");
@@ -216,12 +246,13 @@ public class EmployeeTabGUI extends JPanel {
 				emp.setAddress(empAddressTxtArea.getText());
 				emp.setEmail(empEmailTxtBox.getText());
 				emp.setPassword(empPasswordTxtBox.getText());
+				emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
+				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
+				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
 	
 				int newEmpId = employeeDAO.addEmployee(emp);
 				
 				if(newEmpId < 0) return;
-				
-				empIdTxtBox.setText(newEmpId + "");
 				
 				updateTable();
 			}
@@ -229,6 +260,32 @@ public class EmployeeTabGUI extends JPanel {
 		add(btnAdd);
 		
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//check id is available
+				if(empIdTxtBox.getText() == "") return;
+				
+				Employee emp = employeeDAO.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
+				
+				if(emp ==  null) return;//can not get employee
+				
+				//update
+				emp.setFirstName(empFirstNameTxtBox.getText());
+				emp.setLastName(empLastNameTxtBox.getText());
+				emp.setDob(empDob.getDate());
+				emp.setPhone(empPhoneNumberTxtBox.getText());
+				emp.setAddress(empAddressTxtArea.getText());
+				emp.setEmail(empEmailTxtBox.getText());
+				emp.setPassword(empPasswordTxtBox.getText());
+				emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
+				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
+				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				employeeDAO.updateEmployee(emp);
+				
+				updateTable();
+			}
+		});
 		btnUpdate.setBounds(651, 342, 89, 23);
 		add(btnUpdate);
 		

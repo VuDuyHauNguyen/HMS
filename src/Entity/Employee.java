@@ -2,6 +2,7 @@ package Entity;
 
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.persistence.Entity;
@@ -31,10 +32,32 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="employees")
 public class Employee {
-	public final static int ADMIN_ROLE 			= 1;
-	public final static int RECEPTIONIST_ROLE 	= 2;
-	public final static int DOCTOR_ROLE 		= 3;
-	public final static int TECHNOLOGIST_ROLE 	= 4;
+	public final static byte ADMIN_ROLE 		= 1;
+	public final static byte RECEPTIONIST_ROLE 	= 2;
+	public final static byte DOCTOR_ROLE 		= 3;
+	public final static byte TECHNOLOGIST_ROLE 	= 4;
+	
+	public final static char GENDER_MALE 		= 'm';
+	public final static char GENDER_FEMALE 		= 'f';
+	public final static char GENDER_UNKNOWN 	= 'u';
+	
+	public final static byte STATUS_ENABLE 		= 1;
+	public final static byte STATUS_DISABLE 	= -1;
+	
+	public final static HashMap<String, Byte> ROLE_MAP = new HashMap<String, Byte>()
+	{{
+	     put("Admin", ADMIN_ROLE);
+	     put("Receptionist", RECEPTIONIST_ROLE);
+	     put("Doctor", DOCTOR_ROLE);
+	     put("Technologist",TECHNOLOGIST_ROLE);
+	}};
+	
+	public final static HashMap<String, Character> GENDER_MAP = new HashMap<String, Character>()
+	{{
+	     put("Female", GENDER_FEMALE);
+	     put("Male", GENDER_MALE);
+	     put("Unknown", GENDER_UNKNOWN);
+	}};
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,9 +71,6 @@ public class Employee {
 	
 	public int getId() {
 		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
 	}
 	public byte getRole() {
 		return role;
