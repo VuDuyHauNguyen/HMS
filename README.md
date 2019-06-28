@@ -1,7 +1,12 @@
 # Hospital Management System 
 
-## Set up
-1. log in to mysql with user=root and password="" 
-2. create database hms_db in mysql, and use database hms_db
-3. create employees table and insert data (in file: database/employee.sql)
-4. create employees table and insert data (in file: database/patient.sql)
+## 
+1. Log in to mySQL with user=root and password=""
+2. Create database hms_db in mySQL
+2. Run the program
+2. Sign in with testing employee accounts
+
+	- admin role: email = admin password = 1
+	- doctor role: email = doctor password = 1
+	- receptionist role: email = receptionist password = 1
+	- technologist role: email = technologist password = 1

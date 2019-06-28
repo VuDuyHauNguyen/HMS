@@ -17,13 +17,13 @@ create table employees (
 	status TINYINT,
     password VARCHAR(50)
 );
-insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Doctor', 'Boucher', 'f', '1977-04-12', '208-982-2375', 'doctor@hospital.com', '245 Brickson Park Lane', 3, 1, 'hospital');
-insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Admin', 'Hospital', 'm', '1961-05-19', '750-970-9083', 'admin@hospital.com', '10023 Kim Road', 1, 1, 'hospital');
-insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Technologist', 'Gilchriest', 'f', '1987-01-30', '106-804-7722', 'technologist@hospital.com', '34 Farwell Avenue', 4, 1, 'hospital');
+insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Doctor', 'Boucher', 'f', '1977-04-12', '208-982-2375', 'doctor', '245 Brickson Park Lane', 3, 1, '1');
+insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Admin', 'Hospital', 'm', '1961-05-19', '750-970-9083', 'admin', '10023 Kim Road', 1, 1, '1');
+insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Technologist', 'Gilchriest', 'f', '1987-01-30', '106-804-7722', 'technologist', '34 Farwell Avenue', 4, 1, '1');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Loise', 'Slaymaker', 'm', '1961-03-05', '488-427-2113', 'lslaymaker3@ihg.com', '203 Blue Bill Park Junction', 4, 1, 'hospital');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Tamra', 'Waiting', 'f', '2005-02-21', '849-760-0355', 'twaiting4@google.it', '8 Bellgrove Trail', 3, 1, 'hospital');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Oralia', 'Ducker', 'f', '2004-08-20', '557-935-6148', 'oducker5@mtv.com', '269 Gulseth Hill', 3, 1, 'hospital');
-insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Receptionist', 'Muccino', 'm', '1958-09-19', '684-669-3913', 'receptionist@hospital.com', '392 Boyd Court', 2, 1, 'hospital');
+insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Receptionist', 'Muccino', 'm', '1958-09-19', '684-669-3913', 'receptionist', '392 Boyd Court', 2, 1, '1');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Honoria', 'Suddards', 'f', '1999-03-27', '275-338-6682', 'hsuddards7@reverbnation.com', '239 Iowa Parkway', 3, 1, 'hospital');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Gail', 'Rumsby', 'f', '2000-05-04', '527-922-0188', 'grumsby8@squidoo.com', '58400 Raven Center', 3, 1, 'hospital');
 insert into employees (firstName, lastName, gender, dob, phone, email, address, role, status, password) values ('Giavani', 'Boustred', 'm', '1962-01-31', '396-370-5566', 'gboustred9@taobao.com', '4844 Eliot Terrace', 3, 1, 'hospital');

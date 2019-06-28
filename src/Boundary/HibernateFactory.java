@@ -35,19 +35,28 @@ public class HibernateFactory {
 		Session sx = null;
 		Transaction tx = null;
 		
+		//list of SQL files need to execute
+		String[] sqlFilePaths = {
+				"./database/employee.sql",
+				"./database/patient.sql"};
+		
 		try {
 			fx = getFactory();
 			sx = fx.openSession();
-			tx = sx.beginTransaction();
 			
-			String sql = FileHelper.readFile("./database/employee.sql");
-			sql = sql.replace("\n", "").replace("\r", "");//remove new line
+			for(String path : sqlFilePaths) {
+				tx = sx.beginTransaction();
+				
+				String sql = FileHelper.readFile(path);
+				sql = sql.replace("\n", "").replace("\r", "");//remove new line
+				
+				//execute each SQL statement
+				for(String command : sql.split(";")) 
+					sx.createNativeQuery(command + ";").executeUpdate();
+				
+				tx.commit();
+			}
 			
-			//execute each SQL statement
-			for(String command : sql.split(";")) 
-				sx.createNativeQuery(command + ";").executeUpdate();
-			
-			tx.commit();
 			
 		}catch(HibernateException hx) {
 			if(tx != null) tx.rollback();

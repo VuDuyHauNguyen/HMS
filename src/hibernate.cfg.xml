@@ -18,5 +18,6 @@
         
         
         <mapping class="Entity.Employee" />
+        <mapping class="Entity.Patient" />
     </session-factory>
 </hibernate-configuration>
