@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -49,6 +50,14 @@ public class MainForm {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Show a message
+	 * @param message
+	 */
+	public static void showMessage(String message) {
+		JOptionPane.showMessageDialog(window.frmHospitalManagementSystem, message);
 	}
 
 	/**

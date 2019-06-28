@@ -79,6 +79,39 @@ public class EmployeeTabGUI extends JPanel {
 		tableEmployees.setRowSorter(new TableRowSorter(tm));
 	}
 	
+	private void updateCurrentEmployeeInfo(Employee emp) {
+		empIdTxtBox.setText(emp.getId() + "");
+		empFirstNameTxtBox.setText(emp.getFirstName());
+		empLastNameTxtBox.setText(emp.getLastName());
+		empDob.setDate(emp.getDob());
+		empPhoneNumberTxtBox.setText(emp.getPhone());
+		empAddressTxtArea.setText(emp.getAddress());
+		empEmailTxtBox.setText(emp.getEmail());
+		empPasswordTxtBox.setText(emp.getPassword());
+		
+		//update role
+		for(String role : Employee.ROLE_MAP.keySet()) {
+			if(Employee.ROLE_MAP.get(role) == emp.getRole()) {
+				comboBoxRole.setSelectedItem(role);
+				break;
+			}
+		}
+		
+		//update gender
+		for(String gender : Employee.GENDER_MAP.keySet()) {
+			if(Employee.GENDER_MAP.get(gender) == emp.getGender()) {
+				comboBoxGender.setSelectedItem(gender);
+				break;
+			}
+		}
+		
+		//update status
+		if(emp.getStatus() == Employee.STATUS_ENABLE)
+			chckbxDisable.setSelected(false);
+		else
+			chckbxDisable.setSelected(true);
+	}
+	
 	/**
 	 * Create the panel.
 	 */
@@ -96,36 +129,7 @@ public class EmployeeTabGUI extends JPanel {
 				//get the employee
 				Employee emp = employeeDAO.getEmployeeById(currId);
 				
-				empIdTxtBox.setText(emp.getId() + "");
-				empFirstNameTxtBox.setText(emp.getFirstName());
-				empLastNameTxtBox.setText(emp.getLastName());
-				empDob.setDate(emp.getDob());
-				empPhoneNumberTxtBox.setText(emp.getPhone());
-				empAddressTxtArea.setText(emp.getAddress());
-				empEmailTxtBox.setText(emp.getEmail());
-				empPasswordTxtBox.setText(emp.getPassword());
-				
-				//update role
-				for(String role : Employee.ROLE_MAP.keySet()) {
-					if(Employee.ROLE_MAP.get(role) == emp.getRole()) {
-						comboBoxRole.setSelectedItem(role);
-						break;
-					}
-				}
-				
-				//update gender
-				for(String gender : Employee.GENDER_MAP.keySet()) {
-					if(Employee.GENDER_MAP.get(gender) == emp.getGender()) {
-						comboBoxGender.setSelectedItem(gender);
-						break;
-					}
-				}
-				
-				//update status
-				if(emp.getStatus() == Employee.STATUS_ENABLE)
-					chckbxDisable.setSelected(false);
-				else
-					chckbxDisable.setSelected(true);
+				updateCurrentEmployeeInfo(emp);
 			}
 		};
 		
@@ -237,6 +241,7 @@ public class EmployeeTabGUI extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				Employee emp =  new Employee();
 				
 				emp.setFirstName(empFirstNameTxtBox.getText());
@@ -252,7 +257,13 @@ public class EmployeeTabGUI extends JPanel {
 	
 				int newEmpId = employeeDAO.addEmployee(emp);
 				
-				if(newEmpId < 0) return;
+				if(newEmpId < 0) {
+					MainForm.showMessage("Cannot create an employee.\nPlease check email existence and try again!");
+					empEmailTxtBox.requestFocus();//focus email field
+					empIdTxtBox.setText("");//clear Id
+				}else {
+					updateCurrentEmployeeInfo(employeeDAO.getEmployeeById(newEmpId));
+				}
 				
 				updateTable();
 			}
@@ -263,7 +274,10 @@ public class EmployeeTabGUI extends JPanel {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//check id is available
-				if(empIdTxtBox.getText() == "") return;
+				if(empIdTxtBox.getText().equals("")) {
+					MainForm.showMessage("Employee Id cannot be blank\nPlease select an employee!");
+					return;
+				}
 				
 				Employee emp = employeeDAO.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
 				
