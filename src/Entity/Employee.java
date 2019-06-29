@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="employees")
-public class Employee {
+public class Employee implements Vectorable{
 	public final static byte ADMIN_ROLE 		= 1;
 	public final static byte RECEPTIONIST_ROLE 	= 2;
 	public final static byte DOCTOR_ROLE 		= 3;

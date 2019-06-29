@@ -12,6 +12,7 @@ import com.toedter.calendar.JDateChooser;
 
 import Boundary.MainForm;
 import Boundary.DAO.EmployeeDAOImpl;
+import Boundary.Helpers.GUIHelper;
 import Entity.Employee;
 
 import java.awt.Font;
@@ -52,33 +53,19 @@ public class EmployeeTabGUI extends JPanel {
 		//remove listener
 		tableEmployees.getSelectionModel().removeListSelectionListener(lsl);
 		
-		tm = new DefaultTableModel();
+		//array of column names in the table
+		String[] columnNames = {"Id", "Role", "Status", "First Name", "Last Name",
+				"DOB", "Gender", "Email", "Phone", "Address", "Password"};
 		
-		//set the columns
-		tm.addColumn("Id");
-		tm.addColumn("Role");
-		tm.addColumn("Status");
-		tm.addColumn("First Name");
-		tm.addColumn("Last Name");
-		tm.addColumn("DOB");
-		tm.addColumn("Gender");
-		tm.addColumn("Email");
-		tm.addColumn("Phone");
-		tm.addColumn("Address");
-		tm.addColumn("Password");
-
-		//get all employees
-		ArrayList<Employee> employees = employeeDAO.getAllEmployees();
-		
-		for(Employee e : employees)
-			tm.addRow(e.getVector());
+		//create a DefaultTableModel object
+		tm = GUIHelper.populateTableModel(columnNames, employeeDAO.getAllEmployees());
 		
 		tableEmployees.setModel(tm);
 		
+		tableEmployees.setRowSorter(new TableRowSorter(tm));
+		
 		//add listener
 		tableEmployees.getSelectionModel().addListSelectionListener(lsl);
-		
-		tableEmployees.setRowSorter(new TableRowSorter(tm));
 	}
 	
 	private void updateCurrentEmployeeInfo(Employee emp) {

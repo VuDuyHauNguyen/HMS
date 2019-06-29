@@ -119,6 +119,7 @@ public class PatientTabGUI extends JPanel {
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				//update a patient
 			}
 		});
 		btnUpdate.setBounds(631, 265, 116, 23);
@@ -127,6 +128,7 @@ public class PatientTabGUI extends JPanel {
 		JButton btnClearForm = new JButton("Clear Form");
 		btnClearForm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//clear patient form
 			}
 		});
 		btnClearForm.setBounds(631, 315, 116, 23);
@@ -135,6 +137,7 @@ public class PatientTabGUI extends JPanel {
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//add a patient
 			}
 		});
 		btnAdd.setBounds(631, 342, 116, 23);
