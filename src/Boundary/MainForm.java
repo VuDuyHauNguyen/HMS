@@ -9,6 +9,11 @@ import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
+import Boundary.DAO.HibernateFactory;
+import Boundary.GUIComponents.AppointmentTabGUI;
+import Boundary.GUIComponents.EmployeeTabGUI;
+import Boundary.GUIComponents.LoginDialog;
+import Boundary.GUIComponents.PatientTabGUI;
 import Controller.Authentication;
 import Entity.Employee;
 

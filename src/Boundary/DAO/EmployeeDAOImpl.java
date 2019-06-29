@@ -1,32 +1,33 @@
-package Boundary;
+package Boundary.DAO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import Entity.Patient;
+import Entity.Employee;
 
-public class PatientDAOImpl {
-
+public class EmployeeDAOImpl {
+	
 	//CREATE
-	public int addPatient(Patient p) {
+	public int addEmployee(Employee e) {
 		//Initialize variables
 		SessionFactory fx = null;
 		Session sx = null;
 		Transaction tx = null;
 		
-		Integer patientId = -1;
+		Integer employeeId = -1;
 		
 		try {
 			fx = HibernateFactory.getFactory();
 			sx = fx.openSession();
 			tx = sx.beginTransaction();
 			
-			//create a patient
-			patientId = (Integer) sx.save(p);
+			//create an employee
+			employeeId = (Integer) sx.save(e);
 			
 			tx.commit();
 			
@@ -38,23 +39,23 @@ public class PatientDAOImpl {
 			fx.close();
 		}
 		
-		return patientId;
+		return employeeId;
 	}
 	
-	//GET a patient by id
-	public Patient getPatientById(int id) {
+	//GET an employee by id
+	public Employee getEmployeeById(int id) {
 		//Initialize variables
 		SessionFactory fx = null;
 		Session sx = null;
 		
-		Patient patient = null;
+		Employee employee = null;
 		
 		try {
 			fx = HibernateFactory.getFactory();
 			sx = fx.openSession();
 			
-			//get a patient
-			patient = sx.get(Patient.class, id);
+			//get employee
+			employee = sx.get(Employee.class, id);
 			
 		}catch(HibernateException hx) {
 			System.err.println(hx.getMessage());
@@ -63,26 +64,27 @@ public class PatientDAOImpl {
 			fx.close();
 		}
 		
-		return patient;
+		return employee;
 	}
 	
-	//GET all patients
-	public ArrayList<Patient> getAllPatients() {
+	//GET an employee by email
+	public Employee getEmployeeByEmail(String email) {
 		//Initialize variables
 		SessionFactory fx = null;
 		Session sx = null;
 		Transaction tx = null;
 		
-		ArrayList<Patient> patients = null;
+		List<Employee> employees = null;
 		
 		try {
 			fx = HibernateFactory.getFactory();
 			sx = fx.openSession();
 			tx = sx.beginTransaction();
 			
-			//get all patients
-			patients = (ArrayList<Patient>) 
-					sx.createQuery("FROM Patient").list(); 
+			//get employees have matched email
+			//assume email is unique before creating an employee
+			employees = (ArrayList<Employee>) 
+					sx.createQuery("FROM Employee E WHERE E.email = '" + email+"'").list(); 
 			
 		}catch(HibernateException hx) {
 			System.err.println(hx.getMessage());
@@ -91,12 +93,41 @@ public class PatientDAOImpl {
 			fx.close();
 		}
 		
-		//return patients
-		return patients;
+		//return the matched employee, else return null
+		return employees.size() == 1? employees.get(0) : null;
+	}
+	
+	//GET all employees
+	public ArrayList<Employee> getAllEmployees() {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		ArrayList<Employee> employees = null;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//get all employees
+			employees = (ArrayList<Employee>) 
+					sx.createQuery("FROM Employee").list(); 
+			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		//return employees
+		return employees;
 	}
 	
 	//UPDATE 
-	public boolean updatePatient(Patient p) {
+	public boolean updateEmployee(Employee e) {
 		//Initialize variables
 		SessionFactory fx = null;
 		Session sx = null;
@@ -109,8 +140,8 @@ public class PatientDAOImpl {
 			sx = fx.openSession();
 			tx = sx.beginTransaction();
 			
-			//update a patient
-			sx.update(p);
+			//update an employee
+			sx.update(e);
 			
 			tx.commit();
 			
@@ -127,7 +158,7 @@ public class PatientDAOImpl {
 	}
 	
 	//DELETE 
-	public boolean deletePatient(Patient p) {
+	public boolean deleteEmployee(Employee e) {
 		//Initialize variables
 		SessionFactory fx = null;
 		Session sx = null;
@@ -140,8 +171,8 @@ public class PatientDAOImpl {
 			sx = fx.openSession();
 			tx = sx.beginTransaction();
 			
-			//delete a patient
-			sx.delete(p);
+			//delete an employee
+			sx.delete(e);
 			
 			tx.commit();
 			
@@ -156,4 +187,5 @@ public class PatientDAOImpl {
 		
 		return result;
 	}
+	
 }

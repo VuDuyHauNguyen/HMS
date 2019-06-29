@@ -1,4 +1,4 @@
-package Boundary;
+package Boundary.GUIComponents;
 
 import java.awt.BorderLayout;
 

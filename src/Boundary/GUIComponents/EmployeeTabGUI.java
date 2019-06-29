@@ -1,4 +1,4 @@
-package Boundary;
+package Boundary.GUIComponents;
 
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -10,6 +10,8 @@ import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
+import Boundary.MainForm;
+import Boundary.DAO.EmployeeDAOImpl;
 import Entity.Employee;
 
 import java.awt.Font;
