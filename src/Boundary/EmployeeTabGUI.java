@@ -30,11 +30,11 @@ public class EmployeeTabGUI extends JPanel {
 	 * Create the panel.
 	 */
 	public EmployeeTabGUI() {
-		setLayout(null);
-				
+		
+		setLayout(null);				
 		tableEmployees = new JTable();
 		tableEmployees.setBounds(10, 11, 512, 354);
-		add(tableEmployees);
+		this.add(tableEmployees);
 		
 		JLabel lblEmpId = new JLabel("Id:");
 		lblEmpId.setFont(new Font("Tahoma", Font.PLAIN, 10));
