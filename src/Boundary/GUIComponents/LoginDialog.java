@@ -1,4 +1,4 @@
-package Boundary;
+package Boundary.GUIComponents;
 
 import java.awt.BorderLayout;
 
@@ -21,10 +21,6 @@ import javax.swing.JPasswordField;
 public class LoginDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	
-	private int result = Authentication.FAIL;
-
-	private static EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
 	
 	private JTextField txtEmail;
 	private JPasswordField passwordField;
@@ -66,11 +62,10 @@ public class LoginDialog extends JDialog {
 			contentPanel.add(btnLogin);
 			btnLogin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {	
-					result = Authentication.login(txtEmail.getText(), String.valueOf(passwordField.getPassword()));
 					
-					if(result == Authentication.FAIL) {
-						JOptionPane.showMessageDialog(parent, "Email does not exist or wrong password.\nPlease try again!");
-					}else {
+					
+					if(Authentication.login(txtEmail.getText(), String.valueOf(passwordField.getPassword())) ==
+							Authentication.SUCCESS_AUTHENTICATION) {
 						setVisible(false);
 						dispose();
 					}

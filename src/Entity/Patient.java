@@ -1,8 +1,14 @@
 package Entity;
 
-import java.sql.Date;
+import java.util.Date;
 
-import javax.swing.JOptionPane;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
 * This is the patient class, where a new, or existing patient, will enter
@@ -19,21 +25,28 @@ import javax.swing.JOptionPane;
 //+-----------+--------------+------+-----+---------+----------------+
 //| Field     | Type         | Null | Key | Default | Extra          |
 //+-----------+--------------+------+-----+---------+----------------+
-//| patientId | int(11)      | NO   | PRI | NULL    | auto_increment |
+//| id 		  | int(11)      | NO   | PRI | NULL    | auto_increment |
 //| firstName | varchar(50)  | YES  |     | NULL    |                |
 //| lastName  | varchar(50)  | YES  |     | NULL    |                |
 //| gender    | char(1)      | YES  |     | NULL    |                |
 //| dob       | date         | YES  |     | NULL    |                |
 //| phone     | varchar(20)  | YES  |     | NULL    |                |
-//| email     | varchar(255) | YES  | UNI | NULL    |                |
+//| email     | varchar(255) | YES  |     | NULL    |                |
 //| address   | varchar(255) | YES  |     | NULL    |                |
 //+-----------+--------------+------+-----+---------+----------------+
 
+@Entity
+@Table(name="patients")
 public class Patient {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String firstName;
 	private String lastName;
 	private String gender;
+	
+	@Temporal(TemporalType.DATE)
 	private Date dob;
 	private String phone;
 	private String email;
@@ -42,9 +55,7 @@ public class Patient {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public String getFirstName() {
 		return firstName;
 	}	
