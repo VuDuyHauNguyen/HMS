@@ -8,10 +8,20 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
+import Boundary.MainForm;
+import Boundary.DAO.PatientDAOImpl;
+import Boundary.Helpers.GUIHelper;
 import Controller.PatientValidation;
+import Entity.Employee;
+import Entity.Patient;
+
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -23,10 +33,70 @@ public class PatientTabGUI extends JPanel {
 	private JTable tablePatients;
 	private JTextField patientFirstNameTxtBox, patientLastNameTxtBox, patientPhoneNumTxtBox,
 		patientIdTxtBox, patientEmailTxtBox;
+	private JDateChooser patientDob;
+	private JTextArea patientAddressTextArea;
+	private JComboBox comboBoxGender;
+	
+	private DefaultTableModel tm;
+	private ListSelectionListener lsl;
+	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
+	
+	//update patient table
+	private void updateTable() {
+		//remove listener
+		tablePatients.getSelectionModel().removeListSelectionListener(lsl);
+		
+		//array of column names in the table
+		String[] columnNames = {"Id", "First Name", "Last Name", "DOB", "Gender", "Email", "Phone", "Address"};
+		
+		//create a DefaultTableModel object
+		tm = GUIHelper.populateTableModel(columnNames, patientDAO.getAllPatients());
+		
+		tablePatients.setModel(tm);
+		
+		tablePatients.setRowSorter(new TableRowSorter(tm));
+		
+		//add listener
+		tablePatients.getSelectionModel().addListSelectionListener(lsl);
+	}
+	
+	private void updateCurrentPatientInfo(Patient patient) {
+		
+		patientIdTxtBox.setText(patient.getId() + "");
+		patientFirstNameTxtBox.setText(patient.getFirstName());
+		patientLastNameTxtBox.setText(patient.getLastName());
+		patientDob.setDate(patient.getDob());
+		patientPhoneNumTxtBox.setText(patient.getPhone());
+		patientAddressTextArea.setText(patient.getAddress());
+		patientEmailTxtBox.setText(patient.getEmail());
+		
+		//update gender
+		for(String gender : Patient.GENDER_MAP.keySet()) {
+			if(Patient.GENDER_MAP.get(gender) == patient.getGender()) {
+				comboBoxGender.setSelectedItem(gender);
+				break;
+			}
+		}
+	}
 
 	public PatientTabGUI() {
 		
 		setLayout(null);
+		
+		//create lsl
+		lsl = new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// TODO Auto-generated method stub
+				int currId = (int) tablePatients.getValueAt(tablePatients.getSelectedRow(), 0);//1st column
+				
+				//get the patient
+				Patient patient = patientDAO.getPatientById(currId);
+				
+				updateCurrentPatientInfo(patient);
+			}
+		};
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -103,15 +173,18 @@ public class PatientTabGUI extends JPanel {
 		PatientValidation.validateAddress(patientEmailTxtBox.toString());
 		add(patientEmailTxtBox);
 			
-		JDateChooser patientDob = new JDateChooser();
+		patientDob = new JDateChooser();
 		patientDob.setBounds(631, 125, 116, 22);
 		add(patientDob);
 		
-		JComboBox comboBoxGender = new JComboBox();
+		comboBoxGender = new JComboBox();
 		comboBoxGender.setBounds(631, 98, 116, 20);
+		comboBoxGender.addItem("Unknown");
+		comboBoxGender.addItem("Female");
+		comboBoxGender.addItem("Male");
 		add(comboBoxGender);
 		
-		JTextArea patientAddressTextArea = new JTextArea();
+		patientAddressTextArea = new JTextArea();
 		patientAddressTextArea.setLineWrap(true);
 		patientAddressTextArea.setBounds(631, 210, 116, 50);
 		add(patientAddressTextArea);
@@ -120,32 +193,84 @@ public class PatientTabGUI extends JPanel {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//update a patient
+				//check id is available
+				if(patientIdTxtBox.getText().equals("")) {
+					MainForm.showMessage("Patient Id cannot be blank\nPlease select a patient!");
+					return;
+				}
+				
+				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdTxtBox.getText()));
+				
+				//update
+				patient.setFirstName(patientFirstNameTxtBox.getText());
+				patient.setLastName(patientLastNameTxtBox.getText());
+				patient.setDob(patientDob.getDate());
+				patient.setPhone(patientPhoneNumTxtBox.getText());
+				patient.setAddress(patientAddressTextArea.getText());
+				patient.setEmail(patientEmailTxtBox.getText());
+				patient.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				if(patientDAO.updatePatient(patient)) {
+					//update UIs
+					updateCurrentPatientInfo(patient);
+					updateTable();
+				}else {
+					MainForm.showMessage("Cannot update the patient\nPlease try again!");
+				}
 			}
 		});
-		btnUpdate.setBounds(631, 265, 116, 23);
+		btnUpdate.setBounds(631, 265, 116, 29);
 		add(btnUpdate);
 		
 		JButton btnClearForm = new JButton("Clear Form");
 		btnClearForm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//clear patient form
+				patientIdTxtBox.setText("");
+				patientFirstNameTxtBox.setText("");
+				patientLastNameTxtBox.setText("");
+				patientDob.setDate(null);
+				patientPhoneNumTxtBox.setText("");
+				patientAddressTextArea.setText("");
+				patientEmailTxtBox.setText("");
+				comboBoxGender.setSelectedIndex(0);
 			}
 		});
-		btnClearForm.setBounds(631, 315, 116, 23);
+		btnClearForm.setBounds(554, 336, 116, 29);
 		add(btnClearForm);
 		
 		JButton btnAdd = new JButton("Add");
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//add a patient
+				Patient patient = new Patient();
+				patient.setFirstName(patientFirstNameTxtBox.getText());
+				patient.setLastName(patientLastNameTxtBox.getText());
+				patient.setDob(patientDob.getDate());
+				patient.setPhone(patientPhoneNumTxtBox.getText());
+				patient.setAddress(patientAddressTextArea.getText());
+				patient.setEmail(patientEmailTxtBox.getText());
+				patient.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				int newPatientId = patientDAO.addPatient(patient);
+				
+				if(newPatientId < 0) {
+					MainForm.showMessage("Cannot create a patient.\nPlease try again!");
+				}else {
+					updateCurrentPatientInfo(patientDAO.getPatientById(newPatientId));
+					updateTable();
+				}
 			}
 		});
-		btnAdd.setBounds(631, 342, 116, 23);
+		btnAdd.setBounds(673, 336, 74, 29);
 		add(btnAdd);
 		
 		JLabel lblId = new JLabel("Id:");
 		lblId.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblId.setBounds(554, 17, 55, 16);
 		add(lblId);
+		
+		//update patients table
+		updateTable();
 	}
 }

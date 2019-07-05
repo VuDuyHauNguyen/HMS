@@ -69,6 +69,7 @@ public class EmployeeTabGUI extends JPanel {
 	}
 	
 	private void updateCurrentEmployeeInfo(Employee emp) {
+		
 		empIdTxtBox.setText(emp.getId() + "");
 		empFirstNameTxtBox.setText(emp.getFirstName());
 		empLastNameTxtBox.setText(emp.getLastName());
@@ -137,60 +138,60 @@ public class EmployeeTabGUI extends JPanel {
 		
 		JLabel lblEmpLastName = new JLabel("Last Name:");
 		lblEmpLastName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpLastName.setBounds(549, 97, 65, 16);
+		lblEmpLastName.setBounds(549, 94, 65, 16);
 		add(lblEmpLastName);
 		
 		empFirstNameTxtBox = new JTextField();
 		empFirstNameTxtBox.setColumns(10);
-		empFirstNameTxtBox.setBounds(624, 63, 116, 22);
+		empFirstNameTxtBox.setBounds(624, 60, 116, 22);
 		add(empFirstNameTxtBox);
 		
 		empLastNameTxtBox = new JTextField();
 		empLastNameTxtBox.setColumns(10);
-		empLastNameTxtBox.setBounds(624, 91, 116, 22);
+		empLastNameTxtBox.setBounds(624, 88, 116, 22);
 		add(empLastNameTxtBox);
 		
 		JLabel lblEmpGender = new JLabel("Gender:");
 		lblEmpGender.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpGender.setBounds(549, 125, 54, 16);
+		lblEmpGender.setBounds(549, 122, 54, 16);
 		add(lblEmpGender);
 		
 		JLabel lblEmpDOB = new JLabel("Date of Birth:");
 		lblEmpDOB.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpDOB.setBounds(549, 152, 65, 16);
+		lblEmpDOB.setBounds(549, 150, 65, 16);
 		add(lblEmpDOB);
 		
 		JLabel lblEmpPhoneNum = new JLabel("Phone:");
 		lblEmpPhoneNum.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpPhoneNum.setBounds(549, 179, 54, 16);
+		lblEmpPhoneNum.setBounds(549, 174, 54, 16);
 		add(lblEmpPhoneNum);
 		
 		empPhoneNumberTxtBox = new JTextField();
 		empPhoneNumberTxtBox.setColumns(10);
-		empPhoneNumberTxtBox.setBounds(624, 176, 116, 22);
+		empPhoneNumberTxtBox.setBounds(624, 168, 116, 22);
 		add(empPhoneNumberTxtBox);
 		
 		JLabel lblEmpEmail = new JLabel("E-Mail:");
 		lblEmpEmail.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpEmail.setBounds(549, 271, 32, 16);
+		lblEmpEmail.setBounds(549, 256, 32, 16);
 		add(lblEmpEmail);
 		
 		empEmailTxtBox = new JTextField();
 		empEmailTxtBox.setColumns(10);
-		empEmailTxtBox.setBounds(624, 268, 116, 22);
+		empEmailTxtBox.setBounds(624, 250, 116, 22);
 		add(empEmailTxtBox);
 		
 		JLabel lblEmpAddress = new JLabel("Address:");
 		lblEmpAddress.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpAddress.setBounds(549, 207, 52, 16);
+		lblEmpAddress.setBounds(549, 195, 52, 16);
 		add(lblEmpAddress);
 		
 		empDob = new JDateChooser();
-		empDob.setBounds(624, 146, 116, 22);
+		empDob.setBounds(624, 144, 116, 22);
 		add(empDob);
 		
 		comboBoxGender = new JComboBox();
-		comboBoxGender.setBounds(624, 121, 116, 20);
+		comboBoxGender.setBounds(624, 118, 116, 20);
 		comboBoxGender.addItem("Unknown");
 		comboBoxGender.addItem("Female");
 		comboBoxGender.addItem("Male");
@@ -208,7 +209,7 @@ public class EmployeeTabGUI extends JPanel {
 		
 		JLabel lblEmpFirstName = new JLabel("First Name:");
 		lblEmpFirstName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpFirstName.setBounds(549, 69, 67, 16);
+		lblEmpFirstName.setBounds(549, 66, 67, 16);
 		add(lblEmpFirstName);
 		
 		JLabel lblEmpRole = new JLabel("Role:");
@@ -225,7 +226,7 @@ public class EmployeeTabGUI extends JPanel {
 		add(comboBoxRole);
 		
 		JButton btnAdd = new JButton("Add");
-		btnAdd.setBounds(549, 342, 89, 23);
+		btnAdd.setBounds(656, 336, 84, 29);
 		btnAdd.addActionListener(new ActionListener() {
 			
 			@Override
@@ -252,9 +253,8 @@ public class EmployeeTabGUI extends JPanel {
 					empIdTxtBox.setText("");//clear Id
 				}else {
 					updateCurrentEmployeeInfo(employeeDAO.getEmployeeById(newEmpId));
+					updateTable();
 				}
-				
-				updateTable();
 			}
 		});
 		add(btnAdd);
@@ -289,23 +289,44 @@ public class EmployeeTabGUI extends JPanel {
 				updateTable();
 			}
 		});
-		btnUpdate.setBounds(651, 342, 89, 23);
+		btnUpdate.setBounds(624, 302, 116, 29);
 		add(btnUpdate);
 		
 		empAddressTxtArea = new JTextArea();
 		empAddressTxtArea.setLineWrap(true);
-		empAddressTxtArea.setBounds(624, 207, 116, 50);
+		empAddressTxtArea.setBounds(624, 195, 116, 50);
 		add(empAddressTxtArea);
 		
 		JLabel lblEmpPassword = new JLabel("Password:");
 		lblEmpPassword.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpPassword.setBounds(549, 302, 54, 16);
+		lblEmpPassword.setBounds(549, 281, 54, 16);
 		add(lblEmpPassword);
 		
 		empPasswordTxtBox = new JTextField();
 		empPasswordTxtBox.setColumns(10);
-		empPasswordTxtBox.setBounds(624, 296, 116, 22);
+		empPasswordTxtBox.setBounds(624, 275, 116, 22);
 		add(empPasswordTxtBox);
+		
+		JButton btnClear = new JButton("Clear Form");
+		btnClear.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				empIdTxtBox.setText("");
+				empFirstNameTxtBox.setText("");
+				empLastNameTxtBox.setText("");
+				empDob.setDate(null);
+				empPhoneNumberTxtBox.setText("");
+				empAddressTxtArea.setText("");
+				empEmailTxtBox.setText("");
+				empPasswordTxtBox.setText("");
+				comboBoxRole.setSelectedIndex(0);
+				comboBoxGender.setSelectedIndex(0);
+				chckbxDisable.setSelected(false);
+			}
+		});
+		btnClear.setBounds(537, 336, 116, 29);
+		add(btnClear);
 
 		//update table
 		updateTable();
