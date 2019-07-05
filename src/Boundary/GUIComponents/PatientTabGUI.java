@@ -15,6 +15,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
+import Boundary.MainForm;
 import Boundary.DAO.PatientDAOImpl;
 import Boundary.Helpers.GUIHelper;
 import Controller.PatientValidation;
@@ -192,6 +193,30 @@ public class PatientTabGUI extends JPanel {
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//update a patient
+				//check id is available
+				if(patientIdTxtBox.getText().equals("")) {
+					MainForm.showMessage("Patient Id cannot be blank\nPlease select a patient!");
+					return;
+				}
+				
+				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdTxtBox.getText()));
+				
+				//update
+				patient.setFirstName(patientFirstNameTxtBox.getText());
+				patient.setLastName(patientLastNameTxtBox.getText());
+				patient.setDob(patientDob.getDate());
+				patient.setPhone(patientPhoneNumTxtBox.getText());
+				patient.setAddress(patientAddressTextArea.getText());
+				patient.setEmail(patientEmailTxtBox.getText());
+				patient.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				if(patientDAO.updatePatient(patient)) {
+					//update UIs
+					updateCurrentPatientInfo(patient);
+					updateTable();
+				}else {
+					MainForm.showMessage("Cannot update the patient\nPlease try again!");
+				}
 			}
 		});
 		btnUpdate.setBounds(631, 265, 116, 29);
@@ -201,6 +226,14 @@ public class PatientTabGUI extends JPanel {
 		btnClearForm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//clear patient form
+				patientIdTxtBox.setText("");
+				patientFirstNameTxtBox.setText("");
+				patientLastNameTxtBox.setText("");
+				patientDob.setDate(null);
+				patientPhoneNumTxtBox.setText("");
+				patientAddressTextArea.setText("");
+				patientEmailTxtBox.setText("");
+				comboBoxGender.setSelectedIndex(0);
 			}
 		});
 		btnClearForm.setBounds(554, 336, 116, 29);
@@ -210,6 +243,23 @@ public class PatientTabGUI extends JPanel {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//add a patient
+				Patient patient = new Patient();
+				patient.setFirstName(patientFirstNameTxtBox.getText());
+				patient.setLastName(patientLastNameTxtBox.getText());
+				patient.setDob(patientDob.getDate());
+				patient.setPhone(patientPhoneNumTxtBox.getText());
+				patient.setAddress(patientAddressTextArea.getText());
+				patient.setEmail(patientEmailTxtBox.getText());
+				patient.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				int newPatientId = patientDAO.addPatient(patient);
+				
+				if(newPatientId < 0) {
+					MainForm.showMessage("Cannot create a patient.\nPlease try again!");
+				}else {
+					updateCurrentPatientInfo(patientDAO.getPatientById(newPatientId));
+					updateTable();
+				}
 			}
 		});
 		btnAdd.setBounds(673, 336, 74, 29);

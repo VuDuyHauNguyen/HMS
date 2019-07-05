@@ -253,9 +253,8 @@ public class EmployeeTabGUI extends JPanel {
 					empIdTxtBox.setText("");//clear Id
 				}else {
 					updateCurrentEmployeeInfo(employeeDAO.getEmployeeById(newEmpId));
+					updateTable();
 				}
-				
-				updateTable();
 			}
 		});
 		add(btnAdd);
@@ -309,6 +308,23 @@ public class EmployeeTabGUI extends JPanel {
 		add(empPasswordTxtBox);
 		
 		JButton btnClear = new JButton("Clear Form");
+		btnClear.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				empIdTxtBox.setText("");
+				empFirstNameTxtBox.setText("");
+				empLastNameTxtBox.setText("");
+				empDob.setDate(null);
+				empPhoneNumberTxtBox.setText("");
+				empAddressTxtArea.setText("");
+				empEmailTxtBox.setText("");
+				empPasswordTxtBox.setText("");
+				comboBoxRole.setSelectedIndex(0);
+				comboBoxGender.setSelectedIndex(0);
+				chckbxDisable.setSelected(false);
+			}
+		});
 		btnClear.setBounds(537, 336, 116, 29);
 		add(btnClear);
 
