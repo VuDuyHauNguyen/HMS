@@ -1,11 +1,16 @@
 package Entity;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -37,14 +42,25 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="patients")
-public class Patient {
+public class Patient implements Vectorable{
+	
+	public final static char GENDER_MALE 		= 'm';
+	public final static char GENDER_FEMALE 		= 'f';
+	public final static char GENDER_UNKNOWN 	= 'u';
+	
+	public final static HashMap<String, Character> GENDER_MAP = new HashMap<String, Character>()
+	{{
+	     put("Female", GENDER_FEMALE);
+	     put("Male", GENDER_MALE);
+	     put("Unknown", GENDER_UNKNOWN);
+	}};
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String firstName;
 	private String lastName;
-	private String gender;
+	private char gender;
 	
 	@Temporal(TemporalType.DATE)
 	private Date dob;
@@ -52,6 +68,17 @@ public class Patient {
 	private String email;
 	private String address;
 	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="patient")//patient variable in Appointment class
+	private List<Appointment> appointments;
+	
+	public List<Appointment> getAppointments() {
+		return appointments;
+	}
+
+	public void setAppointments(List<Appointment> appointments) {
+		this.appointments = appointments;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -68,11 +95,11 @@ public class Patient {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}	
-	public String getGender() {
+	public char getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(char gender) {
 		this.gender = gender;
 	}
 
@@ -106,5 +133,20 @@ public class Patient {
 	
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	@Override
+	public Vector getVector() {
+		Vector v = new Vector();
+		v.add(id);
+		v.add(firstName);
+		v.add(lastName);
+		v.add(dob);
+		v.add(gender);
+		v.add(email);
+		v.add(phone);
+		v.add(address);
+		
+		return v;
 	}
 }
