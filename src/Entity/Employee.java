@@ -3,15 +3,19 @@ package Entity;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 
 //+------------+--------------+------+-----+---------+----------------+
 //| Field      | Type         | Null | Key | Default | Extra          |
@@ -68,6 +72,16 @@ public class Employee implements Vectorable{
 	
 	@Temporal(TemporalType.DATE)
 	private Date dob;
+	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="receptionist")//receptionist variable in Appointment class
+	private List<Appointment> appointments;
+	
+	public List<Appointment> getAppointments() {
+		return appointments;
+	}
+	public void setAppointments(List<Appointment> appointments) {
+		this.appointments = appointments;
+	}
 	
 	public int getId() {
 		return id;

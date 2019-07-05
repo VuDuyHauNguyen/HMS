@@ -122,7 +122,7 @@ public class PatientTabGUI extends JPanel {
 				//update a patient
 			}
 		});
-		btnUpdate.setBounds(631, 265, 116, 23);
+		btnUpdate.setBounds(631, 265, 116, 29);
 		add(btnUpdate);
 		
 		JButton btnClearForm = new JButton("Clear Form");
@@ -131,7 +131,7 @@ public class PatientTabGUI extends JPanel {
 				//clear patient form
 			}
 		});
-		btnClearForm.setBounds(631, 315, 116, 23);
+		btnClearForm.setBounds(554, 336, 116, 29);
 		add(btnClearForm);
 		
 		JButton btnAdd = new JButton("Add");
@@ -140,7 +140,7 @@ public class PatientTabGUI extends JPanel {
 				//add a patient
 			}
 		});
-		btnAdd.setBounds(631, 342, 116, 23);
+		btnAdd.setBounds(673, 336, 74, 29);
 		add(btnAdd);
 		
 		JLabel lblId = new JLabel("Id:");
