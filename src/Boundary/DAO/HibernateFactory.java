@@ -1,5 +1,7 @@
 package Boundary.DAO;
 
+import java.util.Date;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -10,6 +12,7 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import Boundary.Helpers.FileHelper;
+import Entity.Appointment;
 
 public class HibernateFactory {
 	public static SessionFactory getFactory() {
@@ -40,7 +43,8 @@ public class HibernateFactory {
 		//list of SQL files need to execute
 		String[] sqlFilePaths = {
 				"./database/employee.sql",
-				"./database/patient.sql"};
+				"./database/patient.sql",
+				"./database/appointment.sql"};
 		
 		try {
 			fx = getFactory();
@@ -58,7 +62,6 @@ public class HibernateFactory {
 				
 				tx.commit();
 			}
-			
 			
 		}catch(HibernateException hx) {
 			if(tx != null) tx.rollback();
