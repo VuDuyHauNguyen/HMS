@@ -1,7 +1,9 @@
 package Entity;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -40,14 +42,25 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="patients")
-public class Patient {
+public class Patient implements Vectorable{
+	
+	public final static char GENDER_MALE 		= 'm';
+	public final static char GENDER_FEMALE 		= 'f';
+	public final static char GENDER_UNKNOWN 	= 'u';
+	
+	public final static HashMap<String, Character> GENDER_MAP = new HashMap<String, Character>()
+	{{
+	     put("Female", GENDER_FEMALE);
+	     put("Male", GENDER_MALE);
+	     put("Unknown", GENDER_UNKNOWN);
+	}};
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String firstName;
 	private String lastName;
-	private String gender;
+	private char gender;
 	
 	@Temporal(TemporalType.DATE)
 	private Date dob;
@@ -82,11 +95,11 @@ public class Patient {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}	
-	public String getGender() {
+	public char getGender() {
 		return gender;
 	}
 
-	public void setGender(String gender) {
+	public void setGender(char gender) {
 		this.gender = gender;
 	}
 
@@ -120,5 +133,20 @@ public class Patient {
 	
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	@Override
+	public Vector getVector() {
+		Vector v = new Vector();
+		v.add(id);
+		v.add(firstName);
+		v.add(lastName);
+		v.add(dob);
+		v.add(gender);
+		v.add(email);
+		v.add(phone);
+		v.add(address);
+		
+		return v;
 	}
 }
