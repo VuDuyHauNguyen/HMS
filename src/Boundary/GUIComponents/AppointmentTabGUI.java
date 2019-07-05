@@ -16,13 +16,21 @@ import javax.swing.table.TableRowSorter;
 
 import com.toedter.calendar.JDateChooser;
 
+import Boundary.MainForm;
 import Boundary.DAO.AppointmentDAOImpl;
+import Boundary.DAO.EmployeeDAOImpl;
+import Boundary.DAO.PatientDAOImpl;
+import Boundary.Helpers.DateTimeHelper;
 import Boundary.Helpers.GUIHelper;
+import Controller.Authentication;
 import Entity.Appointment;
 import Entity.Employee;
+import Entity.Patient;
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AppointmentTabGUI extends JPanel {
 	
@@ -31,10 +39,14 @@ public class AppointmentTabGUI extends JPanel {
 	private JTextField textField;
 	private JTextField patientIdTxtBox;
 	private JTextField appointmentIdTxtBox;
+	private JComboBox<String> appmntRecptStatusCbox, appmntRecptTimeCbox;
+	private JDateChooser appointmentDate;
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
 	private AppointmentDAOImpl appointmentDAO = new AppointmentDAOImpl();
+	private EmployeeDAOImpl employyeeDAO = new EmployeeDAOImpl(); 
+	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
 	
 
 	private void updateTable() {
@@ -55,6 +67,20 @@ public class AppointmentTabGUI extends JPanel {
 		tableAppointment.getSelectionModel().addListSelectionListener(lsl);
 	}
 	
+	private void updateCurrentAppointmentInfo(Appointment appointment) {
+		appointmentIdTxtBox.setText(appointment.getId() + "");
+		receptionistIdTxtBox.setText(appointment.getReceptionist().getId() + "");
+		patientIdTxtBox.setText(appointment.getPatient().getId() + "");
+		appointmentDate.setDate(appointment.getAppointmentTime());
+		appmntRecptTimeCbox.setSelectedItem(DateTimeHelper.getDisplayTimeFromDate(
+				appointment.getAppointmentTime()));
+		appmntRecptStatusCbox.setSelectedItem(appointment.getStatus());
+		
+		//update appointment time
+//		for(String appTime: appmntRecptTimeCbox.)
+		
+	}
+	
 	public AppointmentTabGUI() {
 		
 		setLayout(null);
@@ -70,7 +96,7 @@ public class AppointmentTabGUI extends JPanel {
 				//get the appointment
 				Appointment app = appointmentDAO.getAppointmentById(currId);
 				
-//				updateCurrentAppointmentInfo(app);
+				updateCurrentAppointmentInfo(app);
 			}
 		};
 		
@@ -100,15 +126,16 @@ public class AppointmentTabGUI extends JPanel {
 		lblApptDate.setBounds(536, 150, 86, 13);
 		add(lblApptDate);
 			
-		JDateChooser appointmentDate = new JDateChooser();
+		appointmentDate = new JDateChooser();
 		appointmentDate.setBounds(628, 141, 116, 22);
 		add(appointmentDate);
 			
-		JComboBox<String> appmntRecptStatusCbox = new JComboBox<String>();
+		appmntRecptStatusCbox = new JComboBox<String>();
+		appmntRecptStatusCbox.setModel(new DefaultComboBoxModel(new String[] {"open", "cancel", "done"}));
 		appmntRecptStatusCbox.setBounds(628, 210, 116, 22);
 		add(appmntRecptStatusCbox);
 			
-		JComboBox appmntRecptTimeCbox = new JComboBox();
+		appmntRecptTimeCbox = new JComboBox();
 		appmntRecptTimeCbox.setModel(new DefaultComboBoxModel(new String[] {"08:00", "08:15", "08:30", "08:45", "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", "16:00"}));
 		appmntRecptTimeCbox.setBounds(628, 175, 116, 22);
 		add(appmntRecptTimeCbox);
@@ -151,43 +178,70 @@ public class AppointmentTabGUI extends JPanel {
 		add(statusLbl);
 		
 		JButton btnAdd = new JButton("Add");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		btnAdd.setBounds(658, 338, 86, 29);
 		add(btnAdd);
 		
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String appointmentIdStr = appointmentIdTxtBox.getText();
+				String patientIdStr = patientIdTxtBox.getText();
+				
+				//check ids are available
+				if(appointmentIdStr.equals("") ||
+						patientIdStr.equals("")) {
+					MainForm.showMessage("Appointment Id and Patient Id cannot be blank\nPlease select an appointment!");
+					return;
+				}
+				
+				//get an appointment
+				Appointment appointment = appointmentDAO.getAppointmentById(
+						Integer.parseInt(appointmentIdStr));
+				
+				if(appointment == null) return;//cannot get the appointment
+				
+				//check patient id is valid
+				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdStr)); 
+				
+				if(patient == null) {
+					MainForm.showMessage("Patient Id is invalid. The patient may not exists.\nPlease try again!");
+					return;
+				}
+				
+				//update use the current logged in employee as a new receptionist
+				appointment.setReceptionist(Authentication.getLoggedInEmployee());
+				appointment.setPatient(patient);
+				//build Date String with format "yyyy-MM-dd HH:mm:ss"
+				appointment.setAppointmentTime(DateTimeHelper.getDateFromString(
+						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
+						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
+						));
+				appointment.setStatus((String)appmntRecptStatusCbox.getSelectedItem());
+				
+				//update database
+				appointmentDAO.updateAppointment(appointment);
+				
+				//update UI
+				updateCurrentAppointmentInfo(appointment);
+				updateTable();
+			}
+		});
 		btnUpdate.setBounds(628, 244, 116, 29);
 		add(btnUpdate);
 		
 		JButton btnClear = new JButton("Clear Form");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 		btnClear.setBounds(536, 338, 115, 29);
 		add(btnClear);
-		
-		JLabel lblDetails = new JLabel("Details:");
-		lblDetails.setBounds(537, 20, 56, 16);		
-			
-		JComboBox comboBox = new JComboBox();
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"This patient used Interac(R).", "This patient used Visa(TM).", "This patient used American Express(TM).", "This patient used Cash."}));
-		comboBox.setBounds(536, 47, 202, 22);		
-			
-		JLabel lblAmount = new JLabel("Amount:");
-		lblAmount.setBounds(536, 82, 56, 16);		
-			
-		textField = new JTextField();
-		textField.setBounds(631, 101, 116, 22);		
-		textField.setColumns(10);
-			
-		JLabel lblPaymentDate = new JLabel("Payment Date:");
-		lblPaymentDate.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblPaymentDate.setBounds(536, 146, 86, 13);		
-			
-		JDateChooser dateChooser_1 = new JDateChooser();
-		dateChooser_1.setBounds(647, 166, 100, 22);		
-			
-		JLabel paymentTime = new JLabel("Time of Payment:");
-		paymentTime.setBounds(536, 201, 116, 16);		
-			
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(647, 230, 91, 22);		
 		
 		updateTable();
 	}

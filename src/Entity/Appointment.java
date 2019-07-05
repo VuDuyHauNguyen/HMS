@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import Boundary.Helpers.DateTimeHelper;
+
 /**
  * This class will define an appointment.
  * This will range from the an appointment
@@ -26,6 +28,10 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="appointments")
 public class Appointment implements Vectorable{
+	
+	public final static String STATUS_OPEN 		= "open";
+	public final static String STATUS_CANCEL 	= "cancel";
+	public final static String STATUS_DONE 		= "done";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,8 +96,8 @@ public class Appointment implements Vectorable{
 		v.add(id);
 		v.add(receptionist.getId());
 		v.add(patient.getId());
-		v.add(appDate.format(appointmentTime));
-		v.add(appTime.format(appointmentTime));
+		v.add(DateTimeHelper.getDisplayDateFromDate(appointmentTime));
+		v.add(DateTimeHelper.getDisplayTimeFromDate(appointmentTime));
 		v.add(status);
 		
 		return v;
