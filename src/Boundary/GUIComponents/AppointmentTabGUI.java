@@ -30,6 +30,7 @@ import Entity.Patient;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 
 public class AppointmentTabGUI extends JPanel {
@@ -75,10 +76,6 @@ public class AppointmentTabGUI extends JPanel {
 		appmntRecptTimeCbox.setSelectedItem(DateTimeHelper.getDisplayTimeFromDate(
 				appointment.getAppointmentTime()));
 		appmntRecptStatusCbox.setSelectedItem(appointment.getStatus());
-		
-		//update appointment time
-//		for(String appTime: appmntRecptTimeCbox.)
-		
 	}
 	
 	public AppointmentTabGUI() {
@@ -181,6 +178,45 @@ public class AppointmentTabGUI extends JPanel {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				String patientIdStr = patientIdTxtBox.getText();
+				
+				//check patient id is available
+				if(patientIdStr.equals("") || 
+						appointmentDate.getDate() == null) {
+					MainForm.showMessage("Patient Id and Appointment Date cannot be blank\nPlease try again!");
+					return;
+				}
+				
+				//check patient id is valid
+				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdStr)); 
+				
+				if(patient == null) {
+					MainForm.showMessage("Patient Id is invalid. The patient may not exists.\nPlease try again!");
+					return;
+				}
+				
+				//create new appointment
+				Appointment appointment = new Appointment();
+
+				//set fields
+				appointment.setReceptionist(Authentication.getLoggedInEmployee());
+				appointment.setPatient(patient);
+				//build Date String with format "yyyy-MM-dd HH:mm:ss"
+				appointment.setAppointmentTime(DateTimeHelper.getDateFromString(
+						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
+						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
+						));
+				appointment.setStatus(Appointment.STATUS_OPEN);//default new appointment status
+				
+				//add appointment to database
+				int newAppointment = appointmentDAO.addAppointment(appointment);
+				
+				if(newAppointment < 0) {
+					MainForm.showMessage("Cannot create an appointment.\nPlease try again!");
+				}else {//update UI
+					updateCurrentAppointmentInfo(appointment);
+					updateTable();
+				}		
 			}
 		});
 		btnAdd.setBounds(658, 338, 86, 29);
@@ -194,8 +230,9 @@ public class AppointmentTabGUI extends JPanel {
 				
 				//check ids are available
 				if(appointmentIdStr.equals("") ||
-						patientIdStr.equals("")) {
-					MainForm.showMessage("Appointment Id and Patient Id cannot be blank\nPlease select an appointment!");
+						patientIdStr.equals("") || 
+						appointmentDate.getDate() == null) {
+					MainForm.showMessage("Appointment Id, Patient Id and Appointment Date cannot be blank\nPlease select an appointment!");
 					return;
 				}
 				
@@ -237,7 +274,13 @@ public class AppointmentTabGUI extends JPanel {
 		JButton btnClear = new JButton("Clear Form");
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				//reset UIs
+				appointmentIdTxtBox.setText("");
+				receptionistIdTxtBox.setText("");
+				patientIdTxtBox.setText("");
+				appointmentDate.setDate(null);
+				appmntRecptTimeCbox.setSelectedIndex(0);
+				appmntRecptStatusCbox.setSelectedIndex(0);
 			}
 		});
 		btnClear.setBounds(536, 338, 115, 29);

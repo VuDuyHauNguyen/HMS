@@ -69,6 +69,7 @@ public class EmployeeTabGUI extends JPanel {
 	}
 	
 	private void updateCurrentEmployeeInfo(Employee emp) {
+		
 		empIdTxtBox.setText(emp.getId() + "");
 		empFirstNameTxtBox.setText(emp.getFirstName());
 		empLastNameTxtBox.setText(emp.getLastName());
