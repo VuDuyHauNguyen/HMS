@@ -42,9 +42,9 @@ public class HibernateFactory {
 		
 		//list of SQL files need to execute
 		String[] sqlFilePaths = {
+				"./database/appointment.sql",
 				"./database/employee.sql",
-				"./database/patient.sql",
-				"./database/appointment.sql"};
+				"./database/patient.sql"};
 		
 		try {
 			fx = getFactory();

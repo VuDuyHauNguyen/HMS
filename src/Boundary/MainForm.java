@@ -113,11 +113,11 @@ public class MainForm {
 		//Employee GUI
 		panelManageEmployees = new EmployeeTabGUI();
 		
-		//Appointment GUI
-		panelManageAppointment = new AppointmentTabGUI();
-		
 		//Patient GUI
 		panelManagePatient = new PatientTabGUI();
+		
+		//Appointment GUI
+		panelManageAppointment = new AppointmentTabGUI();
 	}
 	
 	//show login dialog

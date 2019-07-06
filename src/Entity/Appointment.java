@@ -1,6 +1,5 @@
 package Entity;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -89,9 +88,6 @@ public class Appointment implements Vectorable{
 	@Override
 	public Vector getVector() {
 		Vector v = new Vector<>();
-		
-		SimpleDateFormat appDate = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat appTime = new SimpleDateFormat("HH:mm");
 		
 		v.add(id);
 		v.add(receptionist.getId());

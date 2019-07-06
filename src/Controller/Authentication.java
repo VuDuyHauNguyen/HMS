@@ -1,7 +1,5 @@
 package Controller;
 
-import javax.swing.JOptionPane;
-
 import Boundary.MainForm;
 import Boundary.DAO.EmployeeDAOImpl;
 import Entity.Employee;
@@ -23,7 +21,7 @@ public final class Authentication {
 		employee = employeeDAO.getEmployeeByEmail(email);
 		
 		if(employee ==  null) {
-			MainForm.showMessage("Email does not exist or wrong password.\\nPlease try again!");
+			MainForm.showMessage("Email does not exist or wrong password.\nPlease try again!");
 			return FAIL_AUTHENTICATION;
 		}
 		else{//found employee 
