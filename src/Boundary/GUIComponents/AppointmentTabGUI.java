@@ -1,8 +1,6 @@
 package Boundary.GUIComponents;
 
 import java.awt.Font;
-import java.awt.Panel;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -18,26 +16,22 @@ import com.toedter.calendar.JDateChooser;
 
 import Boundary.MainForm;
 import Boundary.DAO.AppointmentDAOImpl;
-import Boundary.DAO.EmployeeDAOImpl;
 import Boundary.DAO.PatientDAOImpl;
 import Boundary.Helpers.DateTimeHelper;
 import Boundary.Helpers.GUIHelper;
 import Controller.Authentication;
 import Entity.Appointment;
-import Entity.Employee;
 import Entity.Patient;
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
-import java.util.Date;
 import java.awt.event.ActionEvent;
 
 public class AppointmentTabGUI extends JPanel {
 	
 	private JTable tableAppointment;
 	private JTextField receptionistIdTxtBox;	
-	private JTextField textField;
 	private JTextField patientIdTxtBox;
 	private JTextField appointmentIdTxtBox;
 	private JComboBox<String> appmntRecptStatusCbox, appmntRecptTimeCbox;
@@ -46,7 +40,6 @@ public class AppointmentTabGUI extends JPanel {
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
 	private AppointmentDAOImpl appointmentDAO = new AppointmentDAOImpl();
-	private EmployeeDAOImpl employyeeDAO = new EmployeeDAOImpl(); 
 	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
 	
 

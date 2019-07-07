@@ -19,7 +19,6 @@ import Boundary.MainForm;
 import Boundary.DAO.PatientDAOImpl;
 import Boundary.Helpers.GUIHelper;
 import Controller.PatientValidation;
-import Entity.Employee;
 import Entity.Patient;
 
 import javax.swing.JComboBox;
@@ -208,7 +207,7 @@ public class PatientTabGUI extends JPanel {
 				patient.setPhone(patientPhoneNumTxtBox.getText());
 				patient.setAddress(patientAddressTextArea.getText());
 				patient.setEmail(patientEmailTxtBox.getText());
-				patient.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
 				
 				if(patientDAO.updatePatient(patient)) {
 					//update UIs
@@ -250,7 +249,7 @@ public class PatientTabGUI extends JPanel {
 				patient.setPhone(patientPhoneNumTxtBox.getText());
 				patient.setAddress(patientAddressTextArea.getText());
 				patient.setEmail(patientEmailTxtBox.getText());
-				patient.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
 				
 				int newPatientId = patientDAO.addPatient(patient);
 				

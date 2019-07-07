@@ -9,22 +9,16 @@ import javax.swing.JButton;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 
-import Boundary.DAO.AppointmentDAOImpl;
-import Boundary.DAO.EmployeeDAOImpl;
 import Boundary.DAO.HibernateFactory;
-import Boundary.DAO.PatientDAOImpl;
 import Boundary.GUIComponents.AppointmentTabGUI;
 import Boundary.GUIComponents.EmployeeTabGUI;
 import Boundary.GUIComponents.LoginDialog;
 import Boundary.GUIComponents.PatientTabGUI;
 import Controller.Authentication;
-import Entity.Appointment;
 import Entity.Employee;
-import Entity.Patient;
 
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
-import java.util.Date;
 import java.awt.event.ActionEvent;
 
 public class MainForm {

@@ -1,7 +1,5 @@
 package Boundary.DAO;
 
-import java.util.Date;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,7 +10,6 @@ import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 import Boundary.Helpers.FileHelper;
-import Entity.Appointment;
 
 public class HibernateFactory {
 	public static SessionFactory getFactory() {
