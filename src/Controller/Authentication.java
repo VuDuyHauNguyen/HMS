@@ -21,7 +21,7 @@ public final class Authentication {
 		employee = employeeDAO.getEmployeeByEmail(email);
 		
 		if(employee ==  null) {
-			MainForm.showMessage("Email does not exist or wrong password.\nPlease try again!");
+			MainForm.showMessage("Email does not exist.\nPlease try again!");
 			return FAIL_AUTHENTICATION;
 		}
 		else{//found employee 
@@ -33,7 +33,8 @@ public final class Authentication {
 			}else if(password.equals(employee.getPassword()))//check password
 				return SUCCESS_AUTHENTICATION;
 			else {
-				employee = null;//set employee to null
+				MainForm.showMessage("Wrong password.\nPlease try again!");
+				logout();//set employee to null
 				return FAIL_AUTHENTICATION;
 			}
 		}

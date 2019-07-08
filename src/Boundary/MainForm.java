@@ -50,6 +50,9 @@ public class MainForm {
 					//login dialog
 					showLoginDialog();
 					
+					//build UI based on user role, then display the main form
+					buildDynamicUIBasedOnUserRole();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -95,6 +98,7 @@ public class MainForm {
 			public void actionPerformed(ActionEvent e) {
 				Authentication.logout();
 				showLoginDialog();
+				buildDynamicUIBasedOnUserRole();
 			}
 		});
 		btnLogout.setBounds(698, 11, 76, 23);
@@ -123,7 +127,10 @@ public class MainForm {
 		
 		LoginDialog loginDialog = new LoginDialog(window.frmHospitalManagementSystem, true);
 		loginDialog.showDialog();
-		
+	}
+	
+	//build dynamic UI based on logged in user role
+	private static void buildDynamicUIBasedOnUserRole() {
 		window.loggedinEmployee = Authentication.getLoggedInEmployee();//get logged in employee
 		
 		if(window.loggedinEmployee == null)//if null then
