@@ -47,6 +47,9 @@ public class MainForm {
 					//set main form to center screen
 					window.frmHospitalManagementSystem.setLocationRelativeTo(null);
 					
+					//Initialize database by execute SQL commands from database folder 
+					HibernateFactory.initializeDatabase();
+					
 					//login dialog
 					showLoginDialog();
 					
@@ -72,9 +75,6 @@ public class MainForm {
 	 * Create the application.
 	 */
 	public MainForm() {
-		//Initialize database by execute SQL commands from database folder 
-		HibernateFactory.initializeDatabase();
-		
 		initialize();
 	}
 
