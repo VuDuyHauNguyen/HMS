@@ -283,9 +283,10 @@ public class EmployeeTabGUI extends JPanel {
 				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
 				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
 				
-				employeeDAO.updateEmployee(emp);
-				
-				updateTable();
+				if(employeeDAO.updateEmployee(emp))
+					updateTable();
+				else
+					MainForm.showMessage("Cannot update the employee.\nPlease try again!");
 			}
 		});
 		btnUpdate.setBounds(624, 302, 116, 29);

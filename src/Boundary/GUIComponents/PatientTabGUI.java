@@ -209,13 +209,10 @@ public class PatientTabGUI extends JPanel {
 				patient.setEmail(patientEmailTxtBox.getText());
 				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
 				
-				if(patientDAO.updatePatient(patient)) {
-					//update UIs
-					updateCurrentPatientInfo(patient);
-					updateTable();
-				}else {
+				if(patientDAO.updatePatient(patient)) 
+					updateTable();//update UIs
+				else 
 					MainForm.showMessage("Cannot update the patient\nPlease try again!");
-				}
 			}
 		});
 		btnUpdate.setBounds(631, 265, 116, 29);
