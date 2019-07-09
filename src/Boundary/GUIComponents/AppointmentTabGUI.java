@@ -254,11 +254,10 @@ public class AppointmentTabGUI extends JPanel {
 				appointment.setStatus((String)appmntRecptStatusCbox.getSelectedItem());
 				
 				//update database
-				appointmentDAO.updateAppointment(appointment);
-				
-				//update UI
-				updateCurrentAppointmentInfo(appointment);
-				updateTable();
+				if(appointmentDAO.updateAppointment(appointment))
+					updateTable();//update UI
+				else
+					MainForm.showMessage("Cannot update the appointment\nPlease try again!");
 			}
 		});
 		btnUpdate.setBounds(628, 244, 116, 29);
