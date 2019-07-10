@@ -28,8 +28,9 @@ import Boundary.Helpers.DateTimeHelper;
 @Table(name="appointments")
 public class Appointment implements Vectorable{
 	
-	public final static String STATUS_OPEN 		= "open";
+	public final static String STATUS_BOOK 		= "book";
 	public final static String STATUS_CANCEL 	= "cancel";
+	public final static String STATUS_QUEUE 	= "queue";
 	public final static String STATUS_DONE 		= "done";
 	
 	@Id

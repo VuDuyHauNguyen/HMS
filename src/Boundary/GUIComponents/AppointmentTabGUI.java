@@ -199,7 +199,7 @@ public class AppointmentTabGUI extends JPanel {
 						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
 						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
 						));
-				appointment.setStatus(Appointment.STATUS_OPEN);//default new appointment status
+				appointment.setStatus(Appointment.STATUS_BOOK);//default new appointment status
 				
 				//add appointment to database
 				int newAppointment = appointmentDAO.addAppointment(appointment);
