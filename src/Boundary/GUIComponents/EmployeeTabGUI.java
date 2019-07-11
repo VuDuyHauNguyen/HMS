@@ -231,6 +231,13 @@ public class EmployeeTabGUI extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
+				//check required fields email & passwords
+				if(empEmailTxtBox.getText().equals("") ||
+						empPasswordTxtBox.getText().equals("")) {
+					MainForm.showMessage("Email and Password cannot be empty.\nPlease try again!");
+					return;
+				}
+				
 				Employee emp =  new Employee();
 				
 				emp.setFirstName(empFirstNameTxtBox.getText());

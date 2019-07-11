@@ -107,15 +107,6 @@ public class MainForm {
 		tabbedPanes = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPanes.setBounds(10, 46, 764, 404);
 		frmHospitalManagementSystem.getContentPane().add(tabbedPanes);
-		
-		//Employee GUI
-		panelManageEmployees = new EmployeeTabGUI();
-		
-		//Patient GUI
-		panelManagePatient = new PatientTabGUI();
-		
-		//Appointment GUI
-		panelManageAppointment = new AppointmentTabGUI();
 	}
 	
 	//show login dialog
@@ -138,6 +129,16 @@ public class MainForm {
 			window.frmHospitalManagementSystem.dispose();//destroy main form
 			System.exit(0);//close application
 		}
+		
+		//Initialized Tabs
+		//Employee GUI
+		panelManageEmployees = new EmployeeTabGUI();
+		
+		//Patient GUI
+		panelManagePatient = new PatientTabGUI();
+		
+		//Appointment GUI
+		panelManageAppointment = new AppointmentTabGUI();
 		
 		//prepare UI based on role		
 		switch(window.loggedinEmployee.getRole()) {
