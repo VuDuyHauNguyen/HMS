@@ -26,6 +26,7 @@ import Entity.Patient;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import java.awt.event.ActionEvent;
 
 public class AppointmentTabGUI extends JPanel {
@@ -177,6 +178,12 @@ public class AppointmentTabGUI extends JPanel {
 				if(patientIdStr.equals("") || 
 						appointmentDate.getDate() == null) {
 					MainForm.showMessage("Patient Id and Appointment Date cannot be blank\nPlease try again!");
+					return;
+				}
+				
+				//cannot create a new appointment in the past
+				if(appointmentDate.getDate().getTime() < (new Date()).getTime()) {
+					MainForm.showMessage("Cannot create an appointment in the past. Please try again!");
 					return;
 				}
 				
