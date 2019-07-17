@@ -11,6 +11,7 @@ import javax.swing.SwingConstants;
 
 import Boundary.DAO.HibernateFactory;
 import Boundary.GUIComponents.AppointmentTabGUI;
+import Boundary.GUIComponents.CheckUpTabGUI;
 import Boundary.GUIComponents.EmployeeTabGUI;
 import Boundary.GUIComponents.LoginDialog;
 import Boundary.GUIComponents.PatientTabGUI;
@@ -27,7 +28,7 @@ public class MainForm {
 	private JFrame frmHospitalManagementSystem;
 	
 	private static JTabbedPane tabbedPanes;
-	private static JPanel panelManagePatient, panelManageAppointment;
+	private static JPanel panelManagePatient, panelManageAppointment, panelCheckUp;
 	
 	private static EmployeeTabGUI panelManageEmployees;
 	
@@ -84,7 +85,7 @@ public class MainForm {
 	private void initialize() {
 		frmHospitalManagementSystem = new JFrame();
 		frmHospitalManagementSystem.setTitle("Hospital Management System");
-		frmHospitalManagementSystem.setBounds(100, 100, 800, 500);
+		frmHospitalManagementSystem.setBounds(100, 100, 800, 510);
 		frmHospitalManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmHospitalManagementSystem.getContentPane().setLayout(null);
 		
@@ -140,12 +141,16 @@ public class MainForm {
 		//Appointment GUI
 		panelManageAppointment = new AppointmentTabGUI();
 		
+		//Check Up GUI
+		panelCheckUp = new CheckUpTabGUI();
+		
 		//prepare UI based on role		
 		switch(window.loggedinEmployee.getRole()) {
 			case Employee.ADMIN_ROLE:
 				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				//add UI based on roles
-				addTabs(new JPanel[] {panelManageEmployees, panelManagePatient, panelManageAppointment}, new String[] {"Employees", "Patients", "Appointment"});
+				addTabs(new JPanel[] {panelManageEmployees, panelManagePatient, panelManageAppointment, panelCheckUp}, 
+						new String[] {"Employees", "Patients", "Appointment", "Check Up"});
 				break;
 			case Employee.RECEPTIONIST_ROLE:
 				//add UI based on roles
@@ -155,7 +160,7 @@ public class MainForm {
 				break;
 			case Employee.DOCTOR_ROLE:
 				//add UI based on roles
-				addTabs(new JPanel[] {panelManagePatient}, new String[] {"Patients"});
+				addTabs(new JPanel[] {panelManagePatient, panelCheckUp}, new String[] {"Patients", "Check Up"});
 				
 				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				break;
