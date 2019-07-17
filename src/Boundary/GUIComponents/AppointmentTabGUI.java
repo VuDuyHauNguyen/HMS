@@ -21,6 +21,7 @@ import Boundary.Helpers.DateTimeHelper;
 import Boundary.Helpers.GUIHelper;
 import Controller.Authentication;
 import Entity.Appointment;
+import Entity.Employee;
 import Entity.Patient;
 
 import javax.swing.JScrollPane;
@@ -52,7 +53,11 @@ public class AppointmentTabGUI extends JPanel {
 		String[] columnNames = {"Id", "Receptionist Id", "Patient Id", "Date", "Time", "Status"};
 		
 		//create a DefaultTableModel object
-		tm = GUIHelper.populateTableModel(columnNames, appointmentDAO.getAllAppointments());
+		Employee loggedInUser = Authentication.getLoggedInEmployee();
+		if(loggedInUser.getRole() == Employee.ADMIN_ROLE)//display all appointments
+			tm = GUIHelper.populateTableModel(columnNames, appointmentDAO.getAllAppointments());
+		else//receptionist: display in-progress from today appointments only
+			tm = GUIHelper.populateTableModel(columnNames, appointmentDAO.getFromTodayAppointments());
 		
 		tableAppointment.setModel(tm);
 		
@@ -122,7 +127,7 @@ public class AppointmentTabGUI extends JPanel {
 		add(appointmentDate);
 			
 		appmntRecptStatusCbox = new JComboBox<String>();
-		appmntRecptStatusCbox.setModel(new DefaultComboBoxModel(new String[] {"open", "cancel", "done"}));
+		appmntRecptStatusCbox.setModel(new DefaultComboBoxModel(new String[] {"book", "cancel","queue","done"}));
 		appmntRecptStatusCbox.setBounds(628, 210, 116, 22);
 		add(appmntRecptStatusCbox);
 			
@@ -182,7 +187,10 @@ public class AppointmentTabGUI extends JPanel {
 				}
 				
 				//cannot create a new appointment in the past
-				if(appointmentDate.getDate().getTime() < (new Date()).getTime()) {
+				if(DateTimeHelper.getDateFromString(
+						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
+						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
+						).getTime() < (new Date()).getTime()) {
 					MainForm.showMessage("Cannot create an appointment in the past. Please try again!");
 					return;
 				}
@@ -233,6 +241,15 @@ public class AppointmentTabGUI extends JPanel {
 						patientIdStr.equals("") || 
 						appointmentDate.getDate() == null) {
 					MainForm.showMessage("Appointment Id, Patient Id and Appointment Date cannot be blank\nPlease select an appointment!");
+					return;
+				}
+				
+				//cannot update appointmentTime to the past 
+				if(DateTimeHelper.getDateFromString(
+						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
+						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
+						).getTime() < (new Date()).getTime()) {
+					MainForm.showMessage("Cannot update an appointment in the past. Please try again!");
 					return;
 				}
 				

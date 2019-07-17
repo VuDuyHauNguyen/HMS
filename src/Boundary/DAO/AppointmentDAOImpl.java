@@ -83,7 +83,38 @@ public class AppointmentDAOImpl {
 			
 			//get all appointments
 			appointments = (ArrayList<Appointment>) 
-					sx.createQuery("FROM Appointment").list(); 
+					sx.createQuery("FROM Appointment ORDER BY appointmentTime").list(); 
+			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		//return appointments
+		return appointments;
+	}
+	
+	//GET all appointments
+	public ArrayList<Appointment> getFromTodayAppointments() {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		ArrayList<Appointment> appointments = null;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//get all appointments
+			appointments = (ArrayList<Appointment>) 
+					sx.createQuery(
+						"FROM Appointment WHERE appointmentTime >= current_timestamp() AND status NOT IN ('cancel', 'done') ORDER BY appointmentTime")
+					.list(); 
 			
 		}catch(HibernateException hx) {
 			System.err.println(hx.getMessage());
