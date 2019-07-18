@@ -26,6 +26,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.border.TitledBorder;
 
 public class EmployeeTabGUI extends JPanel {
 
@@ -124,108 +125,185 @@ public class EmployeeTabGUI extends JPanel {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(10, 11, 512, 354);
+		scrollPane.setBounds(10, 11, 733, 620);
 		add(scrollPane);
 				
 		tableEmployees = new JTable();
 		scrollPane.setViewportView(tableEmployees);
 		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Manage Employees", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(747, 3, 215, 410);
+		add(panel);
+		panel.setLayout(null);
+		
 		JLabel lblEmpId = new JLabel("Id:");
+		lblEmpId.setBounds(18, 27, 74, 16);
+		panel.add(lblEmpId);
 		lblEmpId.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpId.setBounds(549, 12, 74, 16);
-		add(lblEmpId);
 		
 		JLabel lblEmpLastName = new JLabel("Last Name:");
+		lblEmpLastName.setBounds(18, 109, 65, 16);
+		panel.add(lblEmpLastName);
 		lblEmpLastName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpLastName.setBounds(549, 94, 65, 16);
-		add(lblEmpLastName);
 		
 		empFirstNameTxtBox = new JTextField();
+		empFirstNameTxtBox.setBounds(93, 75, 116, 22);
+		panel.add(empFirstNameTxtBox);
 		empFirstNameTxtBox.setColumns(10);
-		empFirstNameTxtBox.setBounds(624, 60, 116, 22);
-		add(empFirstNameTxtBox);
 		
 		empLastNameTxtBox = new JTextField();
+		empLastNameTxtBox.setBounds(93, 103, 116, 22);
+		panel.add(empLastNameTxtBox);
 		empLastNameTxtBox.setColumns(10);
-		empLastNameTxtBox.setBounds(624, 88, 116, 22);
-		add(empLastNameTxtBox);
 		
 		JLabel lblEmpGender = new JLabel("Gender:");
+		lblEmpGender.setBounds(18, 137, 54, 16);
+		panel.add(lblEmpGender);
 		lblEmpGender.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpGender.setBounds(549, 122, 54, 16);
-		add(lblEmpGender);
 		
 		JLabel lblEmpDOB = new JLabel("Date of Birth:");
+		lblEmpDOB.setBounds(18, 165, 65, 16);
+		panel.add(lblEmpDOB);
 		lblEmpDOB.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpDOB.setBounds(549, 150, 65, 16);
-		add(lblEmpDOB);
 		
 		JLabel lblEmpPhoneNum = new JLabel("Phone:");
+		lblEmpPhoneNum.setBounds(18, 189, 54, 16);
+		panel.add(lblEmpPhoneNum);
 		lblEmpPhoneNum.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpPhoneNum.setBounds(549, 174, 54, 16);
-		add(lblEmpPhoneNum);
 		
 		empPhoneNumberTxtBox = new JTextField();
+		empPhoneNumberTxtBox.setBounds(93, 183, 116, 22);
+		panel.add(empPhoneNumberTxtBox);
 		empPhoneNumberTxtBox.setColumns(10);
-		empPhoneNumberTxtBox.setBounds(624, 168, 116, 22);
-		add(empPhoneNumberTxtBox);
 		
 		JLabel lblEmpEmail = new JLabel("E-Mail:");
+		lblEmpEmail.setBounds(18, 271, 32, 16);
+		panel.add(lblEmpEmail);
 		lblEmpEmail.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpEmail.setBounds(549, 256, 32, 16);
-		add(lblEmpEmail);
 		
 		empEmailTxtBox = new JTextField();
+		empEmailTxtBox.setBounds(93, 265, 116, 22);
+		panel.add(empEmailTxtBox);
 		empEmailTxtBox.setColumns(10);
-		empEmailTxtBox.setBounds(624, 250, 116, 22);
-		add(empEmailTxtBox);
 		
 		JLabel lblEmpAddress = new JLabel("Address:");
+		lblEmpAddress.setBounds(18, 210, 52, 16);
+		panel.add(lblEmpAddress);
 		lblEmpAddress.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpAddress.setBounds(549, 195, 52, 16);
-		add(lblEmpAddress);
 		
 		empDob = new JDateChooser();
-		empDob.setBounds(624, 144, 116, 22);
-		add(empDob);
+		empDob.setBounds(93, 159, 116, 22);
+		panel.add(empDob);
 		
 		comboBoxGender = new JComboBox();
-		comboBoxGender.setBounds(624, 118, 116, 20);
+		comboBoxGender.setBounds(93, 133, 116, 20);
+		panel.add(comboBoxGender);
 		comboBoxGender.addItem("Unknown");
 		comboBoxGender.addItem("Female");
 		comboBoxGender.addItem("Male");
-		add(comboBoxGender);
 		
 		empIdTxtBox = new JTextField();
+		empIdTxtBox.setBounds(93, 23, 44, 20);
+		panel.add(empIdTxtBox);
 		empIdTxtBox.setEditable(false);
-		empIdTxtBox.setBounds(624, 8, 44, 20);
-		add(empIdTxtBox);
 		empIdTxtBox.setColumns(10);
 		
 		chckbxDisable = new JCheckBox("Disable");
-		chckbxDisable.setBounds(673, 7, 67, 23);
-		add(chckbxDisable);
+		chckbxDisable.setBounds(142, 22, 67, 23);
+		panel.add(chckbxDisable);
 		
 		JLabel lblEmpFirstName = new JLabel("First Name:");
+		lblEmpFirstName.setBounds(18, 81, 67, 16);
+		panel.add(lblEmpFirstName);
 		lblEmpFirstName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpFirstName.setBounds(549, 66, 67, 16);
-		add(lblEmpFirstName);
 		
 		JLabel lblEmpRole = new JLabel("Role:");
+		lblEmpRole.setBounds(18, 54, 74, 16);
+		panel.add(lblEmpRole);
 		lblEmpRole.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpRole.setBounds(549, 39, 74, 16);
-		add(lblEmpRole);
 		
 		comboBoxRole = new JComboBox();
-		comboBoxRole.setBounds(624, 35, 116, 20);
+		comboBoxRole.setBounds(93, 50, 116, 20);
+		panel.add(comboBoxRole);
 		comboBoxRole.addItem("Admin");
 		comboBoxRole.addItem("Receptionist");
 		comboBoxRole.addItem("Doctor");
 		comboBoxRole.addItem("Technologist");
-		add(comboBoxRole);
 		
 		JButton btnAdd = new JButton("Add");
-		btnAdd.setBounds(656, 336, 84, 29);
+		btnAdd.setBounds(125, 365, 84, 29);
+		panel.add(btnAdd);
+		
+		JButton btnUpdate = new JButton("Update");
+		btnUpdate.setBounds(93, 317, 116, 29);
+		panel.add(btnUpdate);
+		
+		empAddressTxtArea = new JTextArea();
+		empAddressTxtArea.setBounds(93, 210, 116, 50);
+		panel.add(empAddressTxtArea);
+		empAddressTxtArea.setLineWrap(true);
+		
+		JLabel lblEmpPassword = new JLabel("Password:");
+		lblEmpPassword.setBounds(18, 296, 54, 16);
+		panel.add(lblEmpPassword);
+		lblEmpPassword.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		
+		empPasswordTxtBox = new JTextField();
+		empPasswordTxtBox.setBounds(93, 290, 116, 22);
+		panel.add(empPasswordTxtBox);
+		empPasswordTxtBox.setColumns(10);
+		
+		JButton btnClear = new JButton("Clear Form");
+		btnClear.setBounds(6, 365, 116, 29);
+		panel.add(btnClear);
+		btnClear.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				empIdTxtBox.setText("");
+				empFirstNameTxtBox.setText("");
+				empLastNameTxtBox.setText("");
+				empDob.setDate(null);
+				empPhoneNumberTxtBox.setText("");
+				empAddressTxtArea.setText("");
+				empEmailTxtBox.setText("");
+				empPasswordTxtBox.setText("");
+				comboBoxRole.setSelectedIndex(0);
+				comboBoxGender.setSelectedIndex(0);
+				chckbxDisable.setSelected(false);
+			}
+		});
+		btnUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//check id is available
+				if(empIdTxtBox.getText().equals("")) {
+					MainForm.showMessage("Employee Id cannot be blank\nPlease select an employee!");
+					return;
+				}
+				
+				Employee emp = employeeDAO.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
+				
+				if(emp ==  null) return;//can not get employee
+				
+				//update
+				emp.setFirstName(empFirstNameTxtBox.getText());
+				emp.setLastName(empLastNameTxtBox.getText());
+				emp.setDob(empDob.getDate());
+				emp.setPhone(empPhoneNumberTxtBox.getText());
+				emp.setAddress(empAddressTxtArea.getText());
+				emp.setEmail(empEmailTxtBox.getText());
+				emp.setPassword(empPasswordTxtBox.getText());
+				emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
+				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
+				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				if(employeeDAO.updateEmployee(emp))
+					updateTable();
+				else
+					MainForm.showMessage("Cannot update the employee.\nPlease try again!");
+			}
+		});
 		btnAdd.addActionListener(new ActionListener() {
 			
 			@Override
@@ -263,77 +341,6 @@ public class EmployeeTabGUI extends JPanel {
 				}
 			}
 		});
-		add(btnAdd);
-		
-		JButton btnUpdate = new JButton("Update");
-		btnUpdate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//check id is available
-				if(empIdTxtBox.getText().equals("")) {
-					MainForm.showMessage("Employee Id cannot be blank\nPlease select an employee!");
-					return;
-				}
-				
-				Employee emp = employeeDAO.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
-				
-				if(emp ==  null) return;//can not get employee
-				
-				//update
-				emp.setFirstName(empFirstNameTxtBox.getText());
-				emp.setLastName(empLastNameTxtBox.getText());
-				emp.setDob(empDob.getDate());
-				emp.setPhone(empPhoneNumberTxtBox.getText());
-				emp.setAddress(empAddressTxtArea.getText());
-				emp.setEmail(empEmailTxtBox.getText());
-				emp.setPassword(empPasswordTxtBox.getText());
-				emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
-				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
-				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
-				
-				if(employeeDAO.updateEmployee(emp))
-					updateTable();
-				else
-					MainForm.showMessage("Cannot update the employee.\nPlease try again!");
-			}
-		});
-		btnUpdate.setBounds(624, 302, 116, 29);
-		add(btnUpdate);
-		
-		empAddressTxtArea = new JTextArea();
-		empAddressTxtArea.setLineWrap(true);
-		empAddressTxtArea.setBounds(624, 195, 116, 50);
-		add(empAddressTxtArea);
-		
-		JLabel lblEmpPassword = new JLabel("Password:");
-		lblEmpPassword.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblEmpPassword.setBounds(549, 281, 54, 16);
-		add(lblEmpPassword);
-		
-		empPasswordTxtBox = new JTextField();
-		empPasswordTxtBox.setColumns(10);
-		empPasswordTxtBox.setBounds(624, 275, 116, 22);
-		add(empPasswordTxtBox);
-		
-		JButton btnClear = new JButton("Clear Form");
-		btnClear.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				empIdTxtBox.setText("");
-				empFirstNameTxtBox.setText("");
-				empLastNameTxtBox.setText("");
-				empDob.setDate(null);
-				empPhoneNumberTxtBox.setText("");
-				empAddressTxtArea.setText("");
-				empEmailTxtBox.setText("");
-				empPasswordTxtBox.setText("");
-				comboBoxRole.setSelectedIndex(0);
-				comboBoxGender.setSelectedIndex(0);
-				chckbxDisable.setSelected(false);
-			}
-		});
-		btnClear.setBounds(537, 336, 116, 29);
-		add(btnClear);
 
 		//update table
 		updateTable();

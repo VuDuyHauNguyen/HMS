@@ -30,33 +30,33 @@ public class LoginDialog extends JDialog {
 		super(parent, modal);
 		
 		setTitle("Login to Hospital Management System");
-		setBounds(100, 100, 300, 150);
+		setBounds(100, 100, 505, 175);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		{
 			JLabel lbEmail = new JLabel("Email");
-			lbEmail.setBounds(27, 15, 46, 14);
+			lbEmail.setBounds(100, 25, 46, 14);
 			contentPanel.add(lbEmail);
 		}
 		{
 			JLabel lblPassword = new JLabel("Password");
-			lblPassword.setBounds(27, 40, 73, 14);
+			lblPassword.setBounds(100, 50, 73, 14);
 			contentPanel.add(lblPassword);
 		}
 		
 		txtEmail = new JTextField();
-		txtEmail.setBounds(102, 11, 150, 20);
+		txtEmail.setBounds(190, 19, 200, 20);
 		contentPanel.add(txtEmail);
 		txtEmail.setColumns(10);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(102, 37, 150, 17);
+		passwordField.setBounds(190, 44, 200, 20);
 		contentPanel.add(passwordField);
 		{
 			JButton btnLogin = new JButton("Login");
-			btnLogin.setBounds(179, 65, 73, 23);
+			btnLogin.setBounds(290, 75, 100, 30);
 			contentPanel.add(btnLogin);
 			btnLogin.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {	

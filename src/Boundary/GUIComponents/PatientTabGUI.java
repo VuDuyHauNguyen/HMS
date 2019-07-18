@@ -26,6 +26,7 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.border.TitledBorder;
 
 public class PatientTabGUI extends JPanel {
 	
@@ -99,96 +100,147 @@ public class PatientTabGUI extends JPanel {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(10, 11, 512, 354);
+		scrollPane.setBounds(10, 11, 733, 620);
 		add(scrollPane);
 		
 		tablePatients = new JTable();
 		scrollPane.setViewportView(tablePatients);
+		
+		JPanel patientFormPanel = new JPanel();
+		patientFormPanel.setBorder(new TitledBorder(null, "Manage Patients", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		patientFormPanel.setBounds(747, 3, 215, 383);
+		add(patientFormPanel);
+		patientFormPanel.setLayout(null);
 
 		JLabel lblFirstName = new JLabel("First Name:");
-		lblFirstName.setBounds(554, 46, 55, 16);
+		lblFirstName.setBounds(10, 57, 55, 16);
+		patientFormPanel.add(lblFirstName);
 		lblFirstName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		add(lblFirstName);
 			
 		patientFirstNameTxtBox = new JTextField();
-		patientFirstNameTxtBox.setBounds(631, 40, 116, 22);
+		patientFirstNameTxtBox.setBounds(83, 51, 116, 22);
+		patientFormPanel.add(patientFirstNameTxtBox);
 		patientFirstNameTxtBox.setColumns(10);
-		PatientValidation.validateFirstName(patientFirstNameTxtBox.toString());
-		add(patientFirstNameTxtBox);
-			
+		
 		JLabel lblLastName = new JLabel("Last Name:");
-		lblLastName.setBounds(554, 75, 65, 16);
+		lblLastName.setBounds(10, 86, 65, 16);
+		patientFormPanel.add(lblLastName);
 		lblLastName.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		PatientValidation.validateLastName(lblLastName.toString());
-		add(lblLastName);
-			
+		
 		patientLastNameTxtBox = new JTextField();
-		patientLastNameTxtBox.setBounds(631, 69, 116, 22);
+		patientLastNameTxtBox.setBounds(83, 80, 116, 22);
+		patientFormPanel.add(patientLastNameTxtBox);
 		patientLastNameTxtBox.setColumns(10);
- 		PatientValidation.validateLastName(patientLastNameTxtBox.toString());
-		add(patientLastNameTxtBox);		
-			
+		
 		JLabel lblGender = new JLabel("Gender:");
-		lblGender.setBounds(554, 102, 45, 16);
+		lblGender.setBounds(10, 113, 45, 16);
+		patientFormPanel.add(lblGender);
 		lblGender.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		add(lblGender);
-			
+		
 		JLabel lblDateOfBirth = new JLabel("Date of Birth:");
-		lblDateOfBirth.setBounds(554, 133, 65, 14);
+		lblDateOfBirth.setBounds(10, 144, 65, 14);
+		patientFormPanel.add(lblDateOfBirth);
 		lblDateOfBirth.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		add(lblDateOfBirth);
-			
+		
 		JLabel lblPhoneNum = new JLabel("Phone:");
-		lblPhoneNum.setBounds(554, 160, 65, 16);
+		lblPhoneNum.setBounds(10, 171, 65, 16);
+		patientFormPanel.add(lblPhoneNum);
 		lblPhoneNum.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		add(lblPhoneNum);
-			
+		
 		patientPhoneNumTxtBox = new JTextField();
-		patientPhoneNumTxtBox.setBounds(631, 154, 116, 22);
+		patientPhoneNumTxtBox.setBounds(83, 165, 116, 22);
+		patientFormPanel.add(patientPhoneNumTxtBox);
 		patientPhoneNumTxtBox.setColumns(10);
-		PatientValidation.validatePhone(patientPhoneNumTxtBox.toString());
-		add(patientPhoneNumTxtBox);
-			
+		
 		JLabel lblEmail = new JLabel("E-Mail:");
-		lblEmail.setBounds(554, 187, 32, 16);
+		lblEmail.setBounds(10, 198, 32, 16);
+		patientFormPanel.add(lblEmail);
 		lblEmail.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		add(lblEmail);
-			
+		
 		patientIdTxtBox = new JTextField();
+		patientIdTxtBox.setBounds(83, 22, 116, 22);
+		patientFormPanel.add(patientIdTxtBox);
 		patientIdTxtBox.setEnabled(false);
-		patientIdTxtBox.setBounds(631, 11, 116, 22);
 		patientIdTxtBox.setColumns(10);
 		PatientValidation.validateEmail(patientIdTxtBox);
-		add(patientIdTxtBox);
-			
+		
 		JLabel lblAddress = new JLabel("Address:");
-		lblAddress.setBounds(554, 210, 52, 16);
+		lblAddress.setBounds(10, 221, 52, 16);
+		patientFormPanel.add(lblAddress);
 		lblAddress.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		add(lblAddress);
-			
+		
 		patientEmailTxtBox = new JTextField();
-		patientEmailTxtBox.setBounds(631, 181, 116, 22);
+		patientEmailTxtBox.setBounds(83, 192, 116, 22);
+		patientFormPanel.add(patientEmailTxtBox);
 		patientEmailTxtBox.setColumns(10);
-		PatientValidation.validateAddress(patientEmailTxtBox.toString());
-		add(patientEmailTxtBox);
-			
+		
 		patientDob = new JDateChooser();
-		patientDob.setBounds(631, 125, 116, 22);
-		add(patientDob);
+		patientDob.setBounds(83, 136, 116, 22);
+		patientFormPanel.add(patientDob);
 		
 		comboBoxGender = new JComboBox();
-		comboBoxGender.setBounds(631, 98, 116, 20);
+		comboBoxGender.setBounds(83, 109, 116, 20);
+		patientFormPanel.add(comboBoxGender);
 		comboBoxGender.addItem("Unknown");
 		comboBoxGender.addItem("Female");
 		comboBoxGender.addItem("Male");
-		add(comboBoxGender);
 		
 		patientAddressTextArea = new JTextArea();
+		patientAddressTextArea.setBounds(83, 221, 116, 50);
+		patientFormPanel.add(patientAddressTextArea);
 		patientAddressTextArea.setLineWrap(true);
-		patientAddressTextArea.setBounds(631, 210, 116, 50);
-		add(patientAddressTextArea);
 		
 		JButton btnUpdate = new JButton("Update");
+		btnUpdate.setBounds(83, 276, 116, 29);
+		patientFormPanel.add(btnUpdate);
+		
+		JButton btnClearForm = new JButton("Clear Form");
+		btnClearForm.setBounds(6, 347, 116, 29);
+		patientFormPanel.add(btnClearForm);
+		
+		JButton btnAdd = new JButton("Add");
+		btnAdd.setBounds(125, 347, 74, 29);
+		patientFormPanel.add(btnAdd);
+		
+		JLabel lblId = new JLabel("Id:");
+		lblId.setBounds(10, 28, 55, 16);
+		patientFormPanel.add(lblId);
+		lblId.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//add a patient
+				Patient patient = new Patient();
+				patient.setFirstName(patientFirstNameTxtBox.getText());
+				patient.setLastName(patientLastNameTxtBox.getText());
+				patient.setDob(patientDob.getDate());
+				patient.setPhone(patientPhoneNumTxtBox.getText());
+				patient.setAddress(patientAddressTextArea.getText());
+				patient.setEmail(patientEmailTxtBox.getText());
+				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				
+				int newPatientId = patientDAO.addPatient(patient);
+				
+				if(newPatientId < 0) {
+					MainForm.showMessage("Cannot create a patient.\nPlease try again!");
+				}else {
+					updateCurrentPatientInfo(patientDAO.getPatientById(newPatientId));
+					updateTable();
+				}
+			}
+		});
+		btnClearForm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//clear patient form
+				patientIdTxtBox.setText("");
+				patientFirstNameTxtBox.setText("");
+				patientLastNameTxtBox.setText("");
+				patientDob.setDate(null);
+				patientPhoneNumTxtBox.setText("");
+				patientAddressTextArea.setText("");
+				patientEmailTxtBox.setText("");
+				comboBoxGender.setSelectedIndex(0);
+			}
+		});
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//update a patient
@@ -215,56 +267,11 @@ public class PatientTabGUI extends JPanel {
 					MainForm.showMessage("Cannot update the patient\nPlease try again!");
 			}
 		});
-		btnUpdate.setBounds(631, 265, 116, 29);
-		add(btnUpdate);
-		
-		JButton btnClearForm = new JButton("Clear Form");
-		btnClearForm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//clear patient form
-				patientIdTxtBox.setText("");
-				patientFirstNameTxtBox.setText("");
-				patientLastNameTxtBox.setText("");
-				patientDob.setDate(null);
-				patientPhoneNumTxtBox.setText("");
-				patientAddressTextArea.setText("");
-				patientEmailTxtBox.setText("");
-				comboBoxGender.setSelectedIndex(0);
-			}
-		});
-		btnClearForm.setBounds(554, 336, 116, 29);
-		add(btnClearForm);
-		
-		JButton btnAdd = new JButton("Add");
-		btnAdd.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//add a patient
-				Patient patient = new Patient();
-				patient.setFirstName(patientFirstNameTxtBox.getText());
-				patient.setLastName(patientLastNameTxtBox.getText());
-				patient.setDob(patientDob.getDate());
-				patient.setPhone(patientPhoneNumTxtBox.getText());
-				patient.setAddress(patientAddressTextArea.getText());
-				patient.setEmail(patientEmailTxtBox.getText());
-				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
-				
-				int newPatientId = patientDAO.addPatient(patient);
-				
-				if(newPatientId < 0) {
-					MainForm.showMessage("Cannot create a patient.\nPlease try again!");
-				}else {
-					updateCurrentPatientInfo(patientDAO.getPatientById(newPatientId));
-					updateTable();
-				}
-			}
-		});
-		btnAdd.setBounds(673, 336, 74, 29);
-		add(btnAdd);
-		
-		JLabel lblId = new JLabel("Id:");
-		lblId.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		lblId.setBounds(554, 17, 55, 16);
-		add(lblId);
+		PatientValidation.validateAddress(patientEmailTxtBox.toString());
+		PatientValidation.validatePhone(patientPhoneNumTxtBox.toString());
+		PatientValidation.validateLastName(patientLastNameTxtBox.toString());
+		PatientValidation.validateLastName(lblLastName.toString());
+		PatientValidation.validateFirstName(patientFirstNameTxtBox.toString());
 		
 		//update patients table
 		updateTable();
