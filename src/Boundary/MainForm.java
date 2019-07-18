@@ -28,8 +28,9 @@ public class MainForm {
 	private JFrame frmHospitalManagementSystem;
 	
 	private static JTabbedPane tabbedPanes;
-	private static JPanel panelManagePatient, panelManageAppointment, panelCheckUp;
+	private static JPanel panelManagePatient, panelManageAppointment;
 	
+	private static CheckUpTabGUI panelCheckUp;
 	private static EmployeeTabGUI panelManageEmployees;
 	
 	private Employee loggedinEmployee;
@@ -71,6 +72,11 @@ public class MainForm {
 	public static void showMessage(String message) {
 		JOptionPane.showMessageDialog(window.frmHospitalManagementSystem, message);
 	}
+	
+	public static void updateTables() {
+		//update Check Up List
+		panelCheckUp.updateTable();
+	}
 
 	/**
 	 * Create the application.
@@ -85,13 +91,13 @@ public class MainForm {
 	private void initialize() {
 		frmHospitalManagementSystem = new JFrame();
 		frmHospitalManagementSystem.setTitle("Hospital Management System");
-		frmHospitalManagementSystem.setBounds(100, 100, 800, 510);
+		frmHospitalManagementSystem.setBounds(100, 100, 1024, 768);
 		frmHospitalManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmHospitalManagementSystem.getContentPane().setLayout(null);
 		
 		lbUser = new JLabel("admin");
 		lbUser.setHorizontalAlignment(SwingConstants.TRAILING);
-		lbUser.setBounds(388, 15, 300, 14);
+		lbUser.setBounds(585, 15, 300, 14);
 		frmHospitalManagementSystem.getContentPane().add(lbUser);
 		
 		JButton btnLogout = new JButton("Logout");
@@ -102,11 +108,11 @@ public class MainForm {
 				buildDynamicUIBasedOnUserRole();
 			}
 		});
-		btnLogout.setBounds(698, 11, 76, 23);
+		btnLogout.setBounds(895, 11, 91, 23);
 		frmHospitalManagementSystem.getContentPane().add(btnLogout);
 		
 		tabbedPanes = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPanes.setBounds(10, 46, 764, 404);
+		tabbedPanes.setBounds(10, 34, 977, 662);
 		frmHospitalManagementSystem.getContentPane().add(tabbedPanes);
 	}
 	

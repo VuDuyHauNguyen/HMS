@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 /**
 * This is the patient class, where a new, or existing patient, will enter
  * their information and then it will be saved to the database.
@@ -68,9 +71,17 @@ public class Patient implements Vectorable{
 	private String email;
 	private String address;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="patient")//patient variable in Appointment class
+	//patient variable in Appointment class
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="patient")
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Appointment> appointments;
 	
+	//patient variable in CheckUpRecord class
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="patient")
+	@Fetch(value = FetchMode.SUBSELECT)
+	private List<CheckUpRecord> checkUpRecords;
+	
+	//getters & setters
 	public List<Appointment> getAppointments() {
 		return appointments;
 	}
@@ -79,6 +90,14 @@ public class Patient implements Vectorable{
 		this.appointments = appointments;
 	}
 
+	public List<CheckUpRecord> getCheckUpRecords() {
+		return checkUpRecords;
+	}
+
+	public void setCheckUpRecords(List<CheckUpRecord> checkUpRecords) {
+		this.checkUpRecords = checkUpRecords;
+	}
+	
 	public int getId() {
 		return id;
 	}
@@ -149,4 +168,5 @@ public class Patient implements Vectorable{
 		
 		return v;
 	}
+	
 }

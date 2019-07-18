@@ -20,5 +20,6 @@
         <mapping class="Entity.Employee" />
         <mapping class="Entity.Patient" />
         <mapping class="Entity.Appointment" />
+        <mapping class="Entity.CheckUpRecord" />
     </session-factory>
 </hibernate-configuration>

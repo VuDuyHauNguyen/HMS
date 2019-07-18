@@ -16,6 +16,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 
 //+------------+--------------+------+-----+---------+----------------+
 //| Field      | Type         | Null | Key | Default | Extra          |
@@ -73,14 +76,29 @@ public class Employee implements Vectorable{
 	@Temporal(TemporalType.DATE)
 	private Date dob;
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="receptionist")//receptionist variable in Appointment class
+	//receptionist variable in Appointment class
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="receptionist")
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Appointment> appointments;
 	
+	//doctor variable in CheckUpRecord class
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="doctor")
+	@Fetch(value = FetchMode.SUBSELECT)
+	private List<CheckUpRecord> checkUpRecords;
+	
+	//getters & setters
 	public List<Appointment> getAppointments() {
 		return appointments;
 	}
 	public void setAppointments(List<Appointment> appointments) {
 		this.appointments = appointments;
+	}
+	
+	public List<CheckUpRecord> getCheckUpRecords() {
+		return checkUpRecords;
+	}
+	public void setCheckUpRecords(List<CheckUpRecord> checkUpRecords) {
+		this.checkUpRecords = checkUpRecords;
 	}
 	
 	public int getId() {
@@ -163,4 +181,5 @@ public class Employee implements Vectorable{
 		
 		return v;
 	}
+
 }
