@@ -22,6 +22,7 @@ import Boundary.Helpers.DateTimeHelper;
 import Boundary.Helpers.GUIHelper;
 import Controller.Authentication;
 import Entity.Appointment;
+import Entity.CheckUpRecord;
 import Entity.Employee;
 import Entity.Patient;
 
@@ -32,13 +33,17 @@ import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class CheckUpTabGUI extends JPanel {
 	
-	private JTable tableAppointment;
+	private JTable tableCheckUpInQueue;
 	private JTextField doctorIdTxtBox;	
 	private JTextField patientIdTxtBox;
 	private JTextField checkUpIdTxtBox;
+	private JTextArea medicalProblemsTextArea, checkUpResultTextArea, prescriptionsTextArea;
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
@@ -46,63 +51,75 @@ public class CheckUpTabGUI extends JPanel {
 	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
 	private CheckUpRecordDAOImpl checkUpRecordDAO = new CheckUpRecordDAOImpl(); 
 	
+	private CheckUpRecord currentCheckUpRecord = null;
+	private JTextField statusTxtBox;
+	private JButton btnCancel, btnDone;
+	
 	public void updateTable() {
 		//remove listener
-		tableAppointment.getSelectionModel().removeListSelectionListener(lsl);
+		tableCheckUpInQueue.getSelectionModel().removeListSelectionListener(lsl);
 		
 		//array of column names in the table
-		String[] columnNames = {"Id", "Patient Id", "Doctor Id", "Date", "Time", 
-				"Medical Problems", "Diagnoses", "Prescriptions", "Status"};
+		String[] columnNames = {"Id", "Patient Id", "Doctor Id", "Medical Problems", "Status"};
 		
-		//create a DefaultTableModel object
-		Employee loggedInUser = Authentication.getLoggedInEmployee();
-		if(loggedInUser.getRole() == Employee.ADMIN_ROLE)//display all appointments
-			tm = GUIHelper.populateTableModel(columnNames, checkUpRecordDAO.getAllCheckUpRecords());
-		else//receptionist: display in-progress from today appointments only
-			tm = GUIHelper.populateTableModel(columnNames, checkUpRecordDAO.getAllCheckUpRecords());
+//		//create a DefaultTableModel object
+//		Employee loggedInUser = Authentication.getLoggedInEmployee();
+//		if(loggedInUser.getRole() == Employee.ADMIN_ROLE)//display all appointments
+//			tm = GUIHelper.populateTableModel(columnNames, checkUpRecordDAO.getAllCheckUpRecords());
+//		else//receptionist: display in-progress from today appointments only
+//			tm = GUIHelper.populateTableModel(columnNames, checkUpRecordDAO.getAllCheckUpRecords());
 		
-		tableAppointment.setModel(tm);
+		tm = GUIHelper.populateTableModel(columnNames, 
+				checkUpRecordDAO.getAllCheckUpRecordInQueueOrInProgressRecords());
 		
-		tableAppointment.setRowSorter(new TableRowSorter(tm));
+		tableCheckUpInQueue.setModel(tm);
+		
+		tableCheckUpInQueue.setRowSorter(new TableRowSorter(tm));
 		
 		//add listener
-		tableAppointment.getSelectionModel().addListSelectionListener(lsl);
+		tableCheckUpInQueue.getSelectionModel().addListSelectionListener(lsl);
 	}
 	
-	private void updateCurrentAppointmentInfo(Appointment appointment) {
-		checkUpIdTxtBox.setText(appointment.getId() + "");
-		doctorIdTxtBox.setText(appointment.getReceptionist().getId() + "");
-		patientIdTxtBox.setText(appointment.getPatient().getId() + "");
-
+	private void updateCurrentAppointmentInfo(CheckUpRecord checkUpRecord) {
+		checkUpIdTxtBox.setText(checkUpRecord.getId() + "");
+		doctorIdTxtBox.setText((checkUpRecord.getDoctor() != null) ?
+				checkUpRecord.getDoctor().getId() + "" : "");
+		patientIdTxtBox.setText(checkUpRecord.getPatient().getId() + "");
+		medicalProblemsTextArea.setText(checkUpRecord.getMedicalProblem());
+		statusTxtBox.setText(checkUpRecord.getStatus());
+	}
+	
+	//clear all check up form
+	private void clearForm(){
+		//reset UIs
+		checkUpIdTxtBox.setText("");
+		doctorIdTxtBox.setText("");
+		patientIdTxtBox.setText("");
+		statusTxtBox.setText("");
+		medicalProblemsTextArea.setText("");
+		checkUpResultTextArea.setText("");
+		prescriptionsTextArea.setText("");
+		
+		//setup buttons
+		GUIHelper.disableButtons(new JButton[] {btnCancel, btnDone});
+		
+		currentCheckUpRecord = null;//reset currentCheckUpRecord
 	}
 	
 	public CheckUpTabGUI() {
-		
-		//create lsl
-		lsl = new ListSelectionListener() {
-			
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
-				int currId = (int) tableAppointment.getValueAt(tableAppointment.getSelectedRow(), 0);//1st column
-				
-				//get the appointment
-				Appointment app = appointmentDAO.getAppointmentById(currId);
-				
-				updateCurrentAppointmentInfo(app);
-			}
-		};
 		setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setEnabled(false);
 		scrollPane.setBounds(10, 11, 733, 620);
 		add(scrollPane);
-		tableAppointment = new JTable();
-		scrollPane.setViewportView(tableAppointment);
+		tableCheckUpInQueue = new JTable();
+
+		scrollPane.setViewportView(tableCheckUpInQueue);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Perform Check Up", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(747, 3, 220, 369);
+		panel.setBounds(747, 3, 220, 422);
 		add(panel);
 		panel.setLayout(null);
 			
@@ -139,100 +156,180 @@ public class CheckUpTabGUI extends JPanel {
 		checkUpIdTxtBox.setEditable(false);
 		checkUpIdTxtBox.setColumns(10);
 		
-		JButton btnDone = new JButton("Done");
-		btnDone.setBounds(114, 333, 100, 29);
+		btnDone = new JButton("Done");
+		btnDone.setForeground(Color.GREEN);
+		btnDone.setBounds(114, 377, 100, 29);
 		panel.add(btnDone);
 		
-		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(6, 333, 100, 29);
-		panel.add(btnSave);
+		btnCancel = new JButton("Cancel");
+		btnCancel.setForeground(Color.RED);
+		btnCancel.setBounds(6, 377, 100, 29);
+		panel.add(btnCancel);
 		
 		JLabel medicalProblemslbl = new JLabel("Medical Problems:");
-		medicalProblemslbl.setBounds(6, 100, 86, 16);
+		medicalProblemslbl.setBounds(6, 125, 86, 16);
 		panel.add(medicalProblemslbl);
 		medicalProblemslbl.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		
 		JLabel checkUpResultlbl = new JLabel("Diagnosises:");
-		checkUpResultlbl.setBounds(6, 170, 86, 16);
+		checkUpResultlbl.setBounds(6, 195, 86, 16);
 		panel.add(checkUpResultlbl);
 		checkUpResultlbl.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		
 		JLabel prescriptionsLbl = new JLabel("Prescriptions:");
-		prescriptionsLbl.setBounds(6, 243, 86, 16);
+		prescriptionsLbl.setBounds(6, 268, 86, 16);
 		panel.add(prescriptionsLbl);
 		prescriptionsLbl.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(8, 117, 206, 48);
+		scrollPane_1.setBounds(6, 142, 206, 48);
 		panel.add(scrollPane_1);
 		
-		JTextArea medicalProblemsTextArea = new JTextArea();
+		medicalProblemsTextArea = new JTextArea();
 		scrollPane_1.setViewportView(medicalProblemsTextArea);
 		medicalProblemsTextArea.setLineWrap(true);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(8, 189, 206, 48);
+		scrollPane_2.setBounds(6, 215, 206, 48);
 		panel.add(scrollPane_2);
 		
-		JTextArea checkUpResultTextArea = new JTextArea();
+		checkUpResultTextArea = new JTextArea();
 		scrollPane_2.setViewportView(checkUpResultTextArea);
 		checkUpResultTextArea.setLineWrap(true);
 		
 		JScrollPane scrollPane_3 = new JScrollPane();
-		scrollPane_3.setBounds(10, 260, 204, 48);
+		scrollPane_3.setBounds(8, 285, 204, 48);
 		panel.add(scrollPane_3);
 		
-		JTextArea prescriptionsTextArea = new JTextArea();
+		prescriptionsTextArea = new JTextArea();
 		scrollPane_3.setViewportView(prescriptionsTextArea);
 		prescriptionsTextArea.setLineWrap(true);
-		btnSave.addActionListener(new ActionListener() {
+		
+		
+		JLabel statusLbl = new JLabel("Status:");
+		statusLbl.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		statusLbl.setBounds(6, 108, 78, 16);
+		panel.add(statusLbl);
+		
+		statusTxtBox = new JTextField();
+		statusTxtBox.setEditable(false);
+		statusTxtBox.setColumns(10);
+		statusTxtBox.setBounds(98, 102, 116, 22);
+		panel.add(statusTxtBox);
+		
+		//create lsl
+		lsl = new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				
+				//check if the doctor has selected a patient
+				//or checkUpRecordId text box has value
+				if(checkUpIdTxtBox.getText().toString().equals("") == false) {
+					MainForm.showMessage("Please finish the check up before moving on another one!"
+							+ "\nOr click Cancel button to return the patient to the Check Up Queue.");
+					return;
+				}
+				
+				//else try to find the selected checkUpRecord	
+				int currId = (int) tableCheckUpInQueue.getValueAt(tableCheckUpInQueue.getSelectedRow(), 0);//1st column
+				
+				//get the checkUpRecord
+				currentCheckUpRecord = checkUpRecordDAO.getCheckUpRecordInQueueById(currId);
+				
+				//check if currenCheckUp is available
+				if(currentCheckUpRecord == null) 
+					MainForm.showMessage("The patient is checked-up by other doctor!");
+				else {
+					//setup buttons
+					GUIHelper.enableButtons(new JButton[] {btnCancel, btnDone});
+					updateCurrentAppointmentInfo(currentCheckUpRecord);
+				}
+				
+				updateTable();
+			}
+		};
+		
+		JButton btnRefreshCheckUp = new JButton("Refresh Check Up Queue");
+		btnRefreshCheckUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				updateTable();//update check up queue
+			}
+		});
+		btnRefreshCheckUp.setForeground(Color.BLUE);
+		btnRefreshCheckUp.setBounds(6, 342, 208, 29);
+		panel.add(btnRefreshCheckUp);
+
+		
+		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//reset UIs
-				checkUpIdTxtBox.setText("");
-				doctorIdTxtBox.setText("");
-				patientIdTxtBox.setText("");
+				
+				//if there is no patient 
+				if(currentCheckUpRecord == null) {
+					return;
+				}
+				
+				//return the patient to the check-up table
+				//set status to 'queue'
+				currentCheckUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
+				
+				//save to database
+				if(checkUpRecordDAO.updateCheckUpRecord(currentCheckUpRecord)) {
+					
+					//reset UIs
+					clearForm();
+					updateTable();
+				}else {
+					MainForm.showMessage("Cannot return the patient to the queue.\nPlease try again!");
+				}
+					
 			}
 		});
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				String patientIdStr = patientIdTxtBox.getText();
-				
-				//check patient id is available
-				if(patientIdStr.equals("")) {
-					MainForm.showMessage("Patient Id and Appointment Date cannot be blank\nPlease try again!");
+				//if there is no patient 
+				if(currentCheckUpRecord == null) {
 					return;
 				}
 				
-				//check patient id is valid
-				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdStr)); 
+				//get require fields
+				String medicalProblems = medicalProblemsTextArea.getText().toString();
+				String checkupResult = checkUpResultTextArea.getText().toString();
+				String prescriptions = prescriptionsTextArea.getText().toString();
 				
-				if(patient == null) {
-					MainForm.showMessage("Patient Id is invalid. The patient may not exists.\nPlease try again!");
+				//check require fields
+				if(medicalProblems.equals("") ||
+						checkupResult.equals("") ||
+						prescriptions.equals("")) {
+					
+					MainForm.showMessage("Please fill all required information and try again!");
 					return;
 				}
 				
-				//create new appointment
-				Appointment appointment = new Appointment();
-
-				//set fields
-				appointment.setReceptionist(Authentication.getLoggedInEmployee());
-				appointment.setPatient(patient);
+				//fill data to currentCheckUpRecord
+				currentCheckUpRecord.setMedicalProblem(medicalProblems);
+				currentCheckUpRecord.setCheckupResult(checkupResult);
+				currentCheckUpRecord.setPrescriptions(prescriptions);
+				currentCheckUpRecord.setStatus(CheckUpRecord.STATUS_DONE);
+				currentCheckUpRecord.setDoctor(Authentication.getLoggedInEmployee());
+				currentCheckUpRecord.setCheckUpRecordTime(new Date());
 				
-				appointment.setStatus(Appointment.STATUS_BOOK);//default new appointment status
-				
-				//add appointment to database
-				int newAppointment = appointmentDAO.addAppointment(appointment);
-				
-				if(newAppointment < 0) {
-					MainForm.showMessage("Cannot create an appointment.\nPlease try again!");
-				}else {//update UI
-					updateCurrentAppointmentInfo(appointment);
+				//save to database
+				if(checkUpRecordDAO.updateCheckUpRecord(currentCheckUpRecord)) {
+					
+					//reset UIs
+					clearForm();
 					updateTable();
-				}		
+				}else {
+					MainForm.showMessage("Cannot save check up record.\nPlease try again!");
+				}
+					
 			}
 		});
-		
+
+		clearForm();
 		updateTable();
 	}
 }
