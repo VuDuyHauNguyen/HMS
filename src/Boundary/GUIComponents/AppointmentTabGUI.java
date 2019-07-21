@@ -32,6 +32,8 @@ import java.awt.event.ActionListener;
 import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.border.TitledBorder;
+import javax.swing.JTextArea;
+import java.awt.Color;
 
 public class AppointmentTabGUI extends JPanel {
 	
@@ -39,7 +41,7 @@ public class AppointmentTabGUI extends JPanel {
 	private JTextField receptionistIdTxtBox;	
 	private JTextField patientIdTxtBox;
 	private JTextField appointmentIdTxtBox;
-	private JComboBox<String> appmntRecptStatusCbox, appmntRecptTimeCbox;
+	private JComboBox<String> appmntRecptTimeCbox;
 	private JDateChooser appointmentDate;
 	
 	private DefaultTableModel tm;
@@ -47,6 +49,12 @@ public class AppointmentTabGUI extends JPanel {
 	private AppointmentDAOImpl appointmentDAO = new AppointmentDAOImpl();
 	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
 	private CheckUpRecordDAOImpl checkUpRecordDAO = new CheckUpRecordDAOImpl(); 
+	private JTextField statusTxtBox;
+	JTextArea textAreaMedicalProblems;
+	
+	private JButton btnAdd, btnClear, btnUpdate, btnCancel, btnEnterCheckUp;
+	
+	private Appointment currentAppointment = null;
 
 	private void updateTable() {
 		//remove listener
@@ -77,7 +85,7 @@ public class AppointmentTabGUI extends JPanel {
 		appointmentDate.setDate(appointment.getAppointmentTime());
 		appmntRecptTimeCbox.setSelectedItem(DateTimeHelper.getDisplayTimeFromDate(
 				appointment.getAppointmentTime()));
-		appmntRecptStatusCbox.setSelectedItem(appointment.getStatus());
+		statusTxtBox.setText(appointment.getStatus());
 	}
 	
 	private void clearForm() {
@@ -86,27 +94,20 @@ public class AppointmentTabGUI extends JPanel {
 		patientIdTxtBox.setText("");
 		appointmentDate.setDate(null);
 		appmntRecptTimeCbox.setSelectedIndex(0);
-		appmntRecptStatusCbox.setSelectedIndex(0);
+		statusTxtBox.setText("");
+		textAreaMedicalProblems.setText("");
+		
+		//setup buttons
+		GUIHelper.enableButtons(new JButton[] {btnAdd});
+		GUIHelper.disableButtons(new JButton[] {btnUpdate, btnCancel, btnEnterCheckUp});
+		
+		//reset currentAppointment
+		currentAppointment = null;
 	}
 	
 	public AppointmentTabGUI() {
 		
 		setLayout(null);
-		
-		//create lsl
-		lsl = new ListSelectionListener() {
-			
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
-				int currId = (int) tableAppointment.getValueAt(tableAppointment.getSelectedRow(), 0);//1st column
-				
-				//get the appointment
-				Appointment app = appointmentDAO.getAppointmentById(currId);
-				
-				updateCurrentAppointmentInfo(app);
-			}
-		};
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 11, 733, 620);
@@ -133,11 +134,6 @@ public class AppointmentTabGUI extends JPanel {
 		appointmentDate = new JDateChooser();
 		appointmentDate.setBounds(98, 113, 116, 22);
 		panel.add(appointmentDate);
-			
-		appmntRecptStatusCbox = new JComboBox<String>();
-		appmntRecptStatusCbox.setBounds(98, 182, 116, 22);
-		panel.add(appmntRecptStatusCbox);
-		appmntRecptStatusCbox.setModel(new DefaultComboBoxModel(new String[] {"book", "cancel","queue","done"}));
 			
 		appmntRecptTimeCbox = new JComboBox();
 		appmntRecptTimeCbox.setBounds(98, 147, 116, 22);
@@ -181,23 +177,102 @@ public class AppointmentTabGUI extends JPanel {
 		panel.add(statusLbl);
 		statusLbl.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		
-		JButton btnAdd = new JButton("Add");
+		statusTxtBox = new JTextField();
+		statusTxtBox.setEditable(false);
+		statusTxtBox.setColumns(10);
+		statusTxtBox.setBounds(98, 182, 116, 22);
+		panel.add(statusTxtBox);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBorder(new TitledBorder(null, "Check In", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel_1.setBounds(747, 360, 215, 136);
+		add(panel_1);
+		panel_1.setLayout(null);
+		
+		JLabel labelMedicalProblems = new JLabel("Medical Problems:");
+		labelMedicalProblems.setBounds(6, 22, 86, 16);
+		panel_1.add(labelMedicalProblems);
+		labelMedicalProblems.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(6, 40, 201, 46);
+		panel_1.add(scrollPane_1);
+		
+		textAreaMedicalProblems = new JTextArea();
+		scrollPane_1.setViewportView(textAreaMedicalProblems);
+		textAreaMedicalProblems.setLineWrap(true);
+		
+		//Buttons setup
+		btnAdd = new JButton("Add");
+		btnAdd.setForeground(Color.GREEN);
 		btnAdd.setBounds(128, 310, 86, 29);
 		panel.add(btnAdd);
 		
-		JButton btnUpdate = new JButton("Update");
+		btnUpdate = new JButton("Update");
+		btnUpdate.setForeground(Color.BLUE);
 		btnUpdate.setBounds(98, 216, 116, 29);
 		panel.add(btnUpdate);
 		
-		JButton btnClear = new JButton("Clear Form");
+		btnClear = new JButton("Clear Form");
 		btnClear.setBounds(6, 310, 115, 29);
 		panel.add(btnClear);
+		
+		btnCancel = new JButton("Cancel");
+
+		btnCancel.setForeground(Color.RED);
+		btnCancel.setBounds(6, 216, 86, 29);
+		panel.add(btnCancel);
+		
+		btnEnterCheckUp = new JButton("Enter Check Up");
+		
+		btnEnterCheckUp.setForeground(Color.BLUE);
+		btnEnterCheckUp.setBounds(48, 100, 159, 29);
+		panel_1.add(btnEnterCheckUp);
+		
+		//create lsl
+		lsl = new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				// TODO Auto-generated method stub
+				int currId = (int) tableAppointment.getValueAt(tableAppointment.getSelectedRow(), 0);//1st column
+				
+				//get the appointment
+				currentAppointment = appointmentDAO.getAppointmentById(currId);
+				
+				//setup buttons
+				GUIHelper.disableButtons(new JButton[] {btnAdd});
+				switch(currentAppointment.getStatus()) {
+					case Appointment.STATUS_BOOK:
+						GUIHelper.enableButtons(new JButton[] {btnUpdate, btnCancel});
+						
+						//if appointment date is today enable button Enter Check Up
+						if(DateTimeHelper.getDisplayDateFromDate(currentAppointment.getAppointmentTime()).equals(
+								DateTimeHelper.getDisplayDateFromDate(new Date())))
+							GUIHelper.enableButtons(new JButton[] {btnEnterCheckUp});
+						else
+							GUIHelper.disableButtons(new JButton[] {btnEnterCheckUp});
+						
+						break;
+					default://appointment reached end state (cancel or done) view only
+						GUIHelper.disableButtons(new JButton[] {btnUpdate, btnCancel, btnEnterCheckUp});
+						break;
+				}
+				
+				
+				updateCurrentAppointmentInfo(currentAppointment);
+			}
+		};
+		
+		//reset UI
 		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//reset UIs
 				clearForm();
 			}
 		});
+		
+		//update an appointment
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				String appointmentIdStr = appointmentIdTxtBox.getText();
@@ -242,35 +317,16 @@ public class AppointmentTabGUI extends JPanel {
 						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
 						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
 						));
-				appointment.setStatus((String)appmntRecptStatusCbox.getSelectedItem());
 				
 				//update database
-				if(appointmentDAO.updateAppointment(appointment)) {
+				if(appointmentDAO.updateAppointment(appointment)) 
 					updateTable();//update UI
-					switch((String)appmntRecptStatusCbox.getSelectedItem()) {
-						case "cancel":
-							clearForm(); break;
-						case "done":
-							//create a new checkUpRecord
-							CheckUpRecord checkUpRecord = new CheckUpRecord();
-							
-							//set default data for the record
-							checkUpRecord.setId(appointment.getId());
-							checkUpRecord.setPatient(appointment.getPatient());
-							checkUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
-							
-							checkUpRecordDAO.addCheckUpRecord(checkUpRecord);
-							
-							//update Tab Check Up
-							MainForm.updateTables();
-							
-							clearForm(); break;
-					}
-				}
 				else
 					MainForm.showMessage("Cannot update the appointment\nPlease try again!");
 			}
 		});
+		
+		//add an appointment
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -325,6 +381,56 @@ public class AppointmentTabGUI extends JPanel {
 			}
 		});
 		
-		updateTable();
+		//cancel an appointment
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				//check currentAppointment available
+				if(currentAppointment == null) return;
+				
+				//cancel appointment
+				currentAppointment.setStatus(Appointment.STATUS_CANCEL);
+				
+				//update database
+				if(appointmentDAO.updateAppointment(currentAppointment)) { 
+					clearForm();
+					updateTable();//update UI
+				}
+				else
+					MainForm.showMessage("Cannot cancel the appointment\nPlease try again!");
+			}
+		});
+		
+		//patient check-in at hospital for a check up
+		btnEnterCheckUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				//create a new check up record
+				CheckUpRecord checkUpRecord = new CheckUpRecord();
+				
+				//get medical problem
+				if(textAreaMedicalProblems.getText().toString().equals("")) {
+					MainForm.showMessage("Please enter patient's medical problems!");
+					return;
+				}
+				
+				checkUpRecord.setMedicalProblem(textAreaMedicalProblems.getText().toString());
+				
+				//set default data for the record
+				checkUpRecord.setId(currentAppointment.getId());
+				checkUpRecord.setPatient(currentAppointment.getPatient());
+				checkUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
+				
+				checkUpRecordDAO.addCheckUpRecord(checkUpRecord);
+				
+				//update Tab Check Up
+				MainForm.updateTables();
+				clearForm();
+				updateTable();
+			}
+		});
+		
+		clearForm();//reset UIs
+		updateTable();//update table
 	}
 }
