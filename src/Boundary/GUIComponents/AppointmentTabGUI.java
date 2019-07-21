@@ -405,28 +405,39 @@ public class AppointmentTabGUI extends JPanel {
 		btnEnterCheckUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//create a new check up record
-				CheckUpRecord checkUpRecord = new CheckUpRecord();
+				//check currentAppointment available
+				if(currentAppointment == null) return;
 				
-				//get medical problem
-				if(textAreaMedicalProblems.getText().toString().equals("")) {
-					MainForm.showMessage("Please enter patient's medical problems!");
-					return;
+				//update status of current appointment to 'done'
+				currentAppointment.setStatus(Appointment.STATUS_DONE);
+				if(appointmentDAO.updateAppointment(currentAppointment)) { 
+					
+					//create a new check up record
+					CheckUpRecord checkUpRecord = new CheckUpRecord();
+					
+					//get medical problem
+					if(textAreaMedicalProblems.getText().toString().equals("")) {
+						MainForm.showMessage("Please enter patient's medical problems!");
+						return;
+					}
+					
+					checkUpRecord.setMedicalProblem(textAreaMedicalProblems.getText().toString());
+					
+					//set default data for the record
+					checkUpRecord.setId(currentAppointment.getId());
+					checkUpRecord.setPatient(currentAppointment.getPatient());
+					checkUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
+					
+					checkUpRecordDAO.addCheckUpRecord(checkUpRecord);
+					
+					//update Tab Check Up
+					MainForm.updateTables();
+					clearForm();
+					updateTable();//update UI
 				}
+				else
+					MainForm.showMessage("Cannot check-in\nPlease try again!");
 				
-				checkUpRecord.setMedicalProblem(textAreaMedicalProblems.getText().toString());
-				
-				//set default data for the record
-				checkUpRecord.setId(currentAppointment.getId());
-				checkUpRecord.setPatient(currentAppointment.getPatient());
-				checkUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
-				
-				checkUpRecordDAO.addCheckUpRecord(checkUpRecord);
-				
-				//update Tab Check Up
-				MainForm.updateTables();
-				clearForm();
-				updateTable();
 			}
 		});
 		
