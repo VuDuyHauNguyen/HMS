@@ -1,12 +1,14 @@
 package Boundary.DAO;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
+import Boundary.Helpers.DateTimeHelper;
 import Entity.Appointment;
 import Entity.Employee;
 
@@ -96,7 +98,7 @@ public class AppointmentDAOImpl {
 		return appointments;
 	}
 	
-	//GET all appointments
+	//GET all appointments from today
 	public ArrayList<Appointment> getFromTodayAppointments() {
 		//Initialize variables
 		SessionFactory fx = null;
@@ -113,8 +115,11 @@ public class AppointmentDAOImpl {
 			//get all appointments
 			appointments = (ArrayList<Appointment>) 
 					sx.createQuery(
-						"FROM Appointment WHERE appointmentTime >= current_timestamp() AND status NOT IN ('cancel', 'done') ORDER BY appointmentTime")
+						"FROM Appointment WHERE appointmentTime >= :today AND status NOT IN ('cancel', 'done') ORDER BY appointmentTime")
+					.setParameter("today", DateTimeHelper.getDateFromString(
+							DateTimeHelper.getDisplayDateFromDate(new Date()) + " 00:00:00"))
 					.list(); 
+			
 			
 		}catch(HibernateException hx) {
 			System.err.println(hx.getMessage());

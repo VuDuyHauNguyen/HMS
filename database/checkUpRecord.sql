@@ -1,6 +1,6 @@
 drop table if exists checkUpRecords;
 create table checkUpRecords (
-	id PRIMARY KEY,
+	id INT PRIMARY KEY,
 	patientId INT,
 	doctorId INT,
 	checkUpRecordTime DATETIME,

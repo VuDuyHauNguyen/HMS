@@ -39,8 +39,8 @@ public class HibernateFactory {
 		
 		//list of SQL files need to execute
 		String[] sqlFilePaths = {
-				"./database/checkUpRecord.sql",
 				"./database/appointment.sql",
+				"./database/checkUpRecord.sql",
 				"./database/employee.sql",
 				"./database/patient.sql"};
 		
