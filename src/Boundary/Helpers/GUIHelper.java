@@ -2,6 +2,7 @@ package Boundary.Helpers;
 
 import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 
 import Entity.Vectorable;
@@ -23,5 +24,19 @@ public class GUIHelper {
 			tm.addRow(row.getVector());
 		
 		return tm;
+	}
+	
+	//disable all buttons
+	public static void disableButtons(JButton[] buttons) {
+		
+		for(JButton button : buttons)
+			button.setEnabled(false);
+	}
+	
+	//enable all buttons
+	public static void enableButtons(JButton[] buttons) {
+		
+		for(JButton button : buttons)
+			button.setEnabled(true);
 	}
 }
