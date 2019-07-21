@@ -110,13 +110,21 @@ public class CheckUpRecord implements Vectorable{
 		v.add(id);
 		v.add(patient.getId());
 		v.add(doctor != null ? doctor.getId() : "");
-		v.add(checkUpRecordTime != null? 
-				DateTimeHelper.getDisplayDateFromDate(checkUpRecordTime) : "");
-		v.add(checkUpRecordTime != null?
-				DateTimeHelper.getDisplayTimeFromDate(checkUpRecordTime) : "");
-		v.add(medicalProblem);
-		v.add(checkupResult);
-		v.add(prescriptions);
+		
+		//if checkUp at end state then display all
+		if(status.equals(STATUS_DONE) ||
+				status.equals(STATUS_CANCEL)) {
+			v.add(checkUpRecordTime != null? 
+					DateTimeHelper.getDisplayDateFromDate(checkUpRecordTime) : "");
+			v.add(checkUpRecordTime != null?
+					DateTimeHelper.getDisplayTimeFromDate(checkUpRecordTime) : "");
+			v.add(medicalProblem);
+			v.add(checkupResult);
+			v.add(prescriptions);
+		}else {//display medical problems only
+			v.add(medicalProblem);
+		}
+		
 		v.add(status);
 		
 		return v;
