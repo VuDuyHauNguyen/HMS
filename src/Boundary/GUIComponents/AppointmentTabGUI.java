@@ -234,6 +234,9 @@ public class AppointmentTabGUI extends JPanel {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
+				
+				tableAppointment.setEnabled(false);
+				
 				// TODO Auto-generated method stub
 				int currId = (int) tableAppointment.getValueAt(tableAppointment.getSelectedRow(), 0);//1st column
 				
@@ -261,6 +264,7 @@ public class AppointmentTabGUI extends JPanel {
 				
 				
 				updateCurrentAppointmentInfo(currentAppointment);
+				tableAppointment.setEnabled(true);
 			}
 		};
 		
@@ -430,8 +434,6 @@ public class AppointmentTabGUI extends JPanel {
 					
 					checkUpRecordDAO.addCheckUpRecord(checkUpRecord);
 					
-					//update Tab Check Up
-					MainForm.updateTables();
 					clearForm();
 					updateTable();//update UI
 				}

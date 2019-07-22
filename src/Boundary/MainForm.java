@@ -14,6 +14,7 @@ import Boundary.GUIComponents.AppointmentTabGUI;
 import Boundary.GUIComponents.CheckUpTabGUI;
 import Boundary.GUIComponents.EmployeeTabGUI;
 import Boundary.GUIComponents.LoginDialog;
+import Boundary.GUIComponents.PatientRecordsTabGUI;
 import Boundary.GUIComponents.PatientTabGUI;
 import Controller.Authentication;
 import Entity.Employee;
@@ -32,6 +33,7 @@ public class MainForm {
 	
 	private static CheckUpTabGUI panelCheckUp;
 	private static EmployeeTabGUI panelManageEmployees;
+	private static PatientRecordsTabGUI panelViewPatientRecords;
 	
 	private Employee loggedinEmployee;
 	
@@ -73,10 +75,10 @@ public class MainForm {
 		JOptionPane.showMessageDialog(window.frmHospitalManagementSystem, message);
 	}
 	
-	public static void updateTables() {
-		//update Check Up List
-		panelCheckUp.updateTable();
-	}
+//	public static void updateTables() {
+//		//update Check Up List
+//		panelCheckUp.updateTable();
+//	}
 
 	/**
 	 * Create the application.
@@ -150,13 +152,16 @@ public class MainForm {
 		//Check Up GUI
 		panelCheckUp = new CheckUpTabGUI();
 		
+		//Patient Records GUI
+		panelViewPatientRecords = new PatientRecordsTabGUI();
+		
 		//prepare UI based on role		
 		switch(window.loggedinEmployee.getRole()) {
 			case Employee.ADMIN_ROLE:
 				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				//add UI based on roles
-				addTabs(new JPanel[] {panelManageEmployees, panelManagePatient, panelManageAppointment, panelCheckUp}, 
-						new String[] {"Employees", "Patients", "Appointment", "Check Up"});
+				addTabs(new JPanel[] {panelManageEmployees, panelManagePatient, panelManageAppointment, panelCheckUp, panelViewPatientRecords}, 
+						new String[] {"Employees", "Patients", "Appointment", "Check Up", "Patient Records"});
 				break;
 			case Employee.RECEPTIONIST_ROLE:
 				//add UI based on roles
@@ -166,7 +171,8 @@ public class MainForm {
 				break;
 			case Employee.DOCTOR_ROLE:
 				//add UI based on roles
-				addTabs(new JPanel[] {panelManagePatient, panelCheckUp}, new String[] {"Patients", "Check Up"});
+				addTabs(new JPanel[] {panelManagePatient, panelCheckUp, panelViewPatientRecords}, 
+						new String[] {"Patients", "Check Up", "Patient Records"});
 				
 				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				break;

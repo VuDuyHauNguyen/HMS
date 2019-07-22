@@ -73,7 +73,7 @@ public class CheckUpRecordDAOImpl {
 	}
 	
 	//GET all records in queue or in progress
-	public ArrayList<CheckUpRecord> getAllCheckUpRecordInQueueOrInProgressRecords() {
+	public ArrayList<CheckUpRecord> getAllCheckUpRecordsInQueueOrInProgress() {
 		//Initialize variables
 		SessionFactory fx = null;
 		Session sx = null;
@@ -92,6 +92,74 @@ public class CheckUpRecordDAOImpl {
 					.setParameterList("state", new String[] {
 							CheckUpRecord.STATUS_QUEUE,
 							CheckUpRecord.STATUS_IN_PROGRESS
+					})
+					.list(); 
+			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		//return all checkUpRecords
+		return checkUpRecords;
+	}
+	
+	//GET all history records
+	public ArrayList<CheckUpRecord> getAllHistoryCheckUpRecords() {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		ArrayList<CheckUpRecord> checkUpRecords = null;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//get all checkUpRecords
+			checkUpRecords = (ArrayList<CheckUpRecord>) 
+					sx.createQuery("FROM CheckUpRecord WHERE status IN (:state)")
+					.setParameterList("state", new String[] {
+							CheckUpRecord.STATUS_DONE,
+							CheckUpRecord.STATUS_CANCEL
+					})
+					.list(); 
+			
+		}catch(HibernateException hx) {
+			System.err.println(hx.getMessage());
+		}finally {
+			sx.close();
+			fx.close();
+		}
+		
+		//return all checkUpRecords
+		return checkUpRecords;
+	}
+	
+	//GET all records of a patient 
+	public ArrayList<CheckUpRecord> getAllCheckUpRecordsByPatientId(int patientId) {
+		//Initialize variables
+		SessionFactory fx = null;
+		Session sx = null;
+		Transaction tx = null;
+		
+		ArrayList<CheckUpRecord> checkUpRecords = null;
+		
+		try {
+			fx = HibernateFactory.getFactory();
+			sx = fx.openSession();
+			tx = sx.beginTransaction();
+			
+			//get all checkUpRecords
+			checkUpRecords = (ArrayList<CheckUpRecord>) 
+					sx.createQuery("FROM CheckUpRecord WHERE patientId = :patientId AND status IN (:state)")
+					.setParameter("patientId", patientId)
+					.setParameterList("state", new String[] {
+							CheckUpRecord.STATUS_DONE
 					})
 					.list(); 
 			
@@ -146,7 +214,7 @@ public class CheckUpRecordDAOImpl {
 			tx = sx.beginTransaction();
 			
 			//get a checkUpRecord and lock the row
-			checkUpRecord = sx.get(CheckUpRecord.class, id, LockMode.PESSIMISTIC_WRITE);
+			checkUpRecord = sx.get(CheckUpRecord.class, id);
 			
 			//check if status = 'queue'
 			if(checkUpRecord.getStatus().equals(CheckUpRecord.STATUS_QUEUE)) {

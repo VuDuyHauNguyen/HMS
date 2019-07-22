@@ -82,8 +82,7 @@ public class Employee implements Vectorable{
 	private List<Appointment> appointments;
 	
 	//doctor variable in CheckUpRecord class
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="doctor")
-	@Fetch(value = FetchMode.SUBSELECT)
+	@OneToMany(mappedBy="doctor")
 	private List<CheckUpRecord> checkUpRecords;
 	
 	//getters & setters

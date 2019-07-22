@@ -77,8 +77,7 @@ public class Patient implements Vectorable{
 	private List<Appointment> appointments;
 	
 	//patient variable in CheckUpRecord class
-	@OneToMany(fetch = FetchType.EAGER, mappedBy="patient")
-	@Fetch(value = FetchMode.SUBSELECT)
+	@OneToMany(mappedBy="patient")
 	private List<CheckUpRecord> checkUpRecords;
 	
 	//getters & setters
