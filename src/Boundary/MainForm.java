@@ -74,11 +74,6 @@ public class MainForm {
 	public static void showMessage(String message) {
 		JOptionPane.showMessageDialog(window.frmHospitalManagementSystem, message);
 	}
-	
-//	public static void updateTables() {
-//		//update Check Up List
-//		panelCheckUp.updateTable();
-//	}
 
 	/**
 	 * Create the application.

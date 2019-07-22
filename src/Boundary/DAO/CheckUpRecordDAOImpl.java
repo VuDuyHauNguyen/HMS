@@ -3,12 +3,10 @@ package Boundary.DAO;
 import java.util.ArrayList;
 
 import org.hibernate.HibernateException;
-import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import Entity.Appointment;
 import Entity.CheckUpRecord;
 
 public class CheckUpRecordDAOImpl {

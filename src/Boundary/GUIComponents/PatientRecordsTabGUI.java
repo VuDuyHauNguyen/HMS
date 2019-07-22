@@ -1,8 +1,6 @@
 package Boundary.GUIComponents;
 
 import java.awt.Font;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -12,31 +10,19 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
-import com.toedter.calendar.JDateChooser;
-
 import Boundary.MainForm;
-import Boundary.DAO.AppointmentDAOImpl;
 import Boundary.DAO.CheckUpRecordDAOImpl;
-import Boundary.DAO.PatientDAOImpl;
-import Boundary.Helpers.DateTimeHelper;
 import Boundary.Helpers.GUIHelper;
-import Controller.Authentication;
-import Entity.Appointment;
 import Entity.CheckUpRecord;
-import Entity.Employee;
-import Entity.Patient;
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class PatientRecordsTabGUI extends JPanel {
 	
@@ -48,8 +34,6 @@ public class PatientRecordsTabGUI extends JPanel {
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
-	private AppointmentDAOImpl appointmentDAO = new AppointmentDAOImpl();
-	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
 	private CheckUpRecordDAOImpl checkUpRecordDAO = new CheckUpRecordDAOImpl(); 
 	
 	private CheckUpRecord currentCheckUpRecord = null;
@@ -66,13 +50,7 @@ public class PatientRecordsTabGUI extends JPanel {
 		String[] columnNames = {"Id", "Patient Id", "Doctor Id", "Date", "Time",
 				"Medical Problems", "Diagnostics", "Prescriptions", "Status"};
 		
-//		//create a DefaultTableModel object
-//		Employee loggedInUser = Authentication.getLoggedInEmployee();
-//		if(loggedInUser.getRole() == Employee.ADMIN_ROLE)//display all appointments
-//			tm = GUIHelper.populateTableModel(columnNames, checkUpRecordDAO.getAllCheckUpRecords());
-//		else//receptionist: display in-progress from today appointments only
-//			tm = GUIHelper.populateTableModel(columnNames, checkUpRecordDAO.getAllCheckUpRecords());
-		
+		//create a DefaultTableModel object
 		tm = GUIHelper.populateTableModel(columnNames, checkUpRecordsToDisplay);
 		
 		tableCheckUpInQueue.setModel(tm);
@@ -270,7 +248,7 @@ public class PatientRecordsTabGUI extends JPanel {
 			}
 		});
 		
-		
+		//Get newest patient records from database
 		btnRefreshCheckUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				

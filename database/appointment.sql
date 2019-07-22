@@ -25,6 +25,6 @@ insert into appointments (patientId, receptionistId, appointmentTime, status) va
 insert into appointments (patientId, receptionistId, appointmentTime, status) values (7, 2, '2018-12-23 12:15:00', 'book');
 insert into appointments (patientId, receptionistId, appointmentTime, status) values (15, 1, '2019-07-29 15:45:00', 'cancel');
 insert into appointments (patientId, receptionistId, appointmentTime, status) values (7, 15, '2018-08-19 10:00:00', 'done');
-insert into appointments (patientId, receptionistId, appointmentTime, status) values (12, 12, '2019-03-20 12:45:00', 'done');
-insert into appointments (patientId, receptionistId, appointmentTime, status) values (2, 1, '2019-07-20 13:45:00', 'book');
-insert into appointments (patientId, receptionistId, appointmentTime, status) values (16, 11, '2019-07-20 10:15:00', 'book');
+insert into appointments (patientId, receptionistId, appointmentTime, status) values (2, 12, '2019-07-22 12:45:00', 'book');
+insert into appointments (patientId, receptionistId, appointmentTime, status) values (2, 1, '2019-07-22 13:45:00', 'book');
+insert into appointments (patientId, receptionistId, appointmentTime, status) values (16, 11, '2019-07-22 10:15:00', 'book');
