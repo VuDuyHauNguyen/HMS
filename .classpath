@@ -95,6 +95,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/sisu-inject-bean-1.4.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/sisu-inject-plexus-1.4.2.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="C:/Users/300284690/Downloads/HMS/lib/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="C:/HMS/HospitalManagementSystem/lib/jcalendar-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
