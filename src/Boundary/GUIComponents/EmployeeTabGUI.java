@@ -8,17 +8,21 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.JTextComponent;
 
 import com.toedter.calendar.JDateChooser;
 
 import Boundary.MainForm;
 import Boundary.DAO.EmployeeDAOImpl;
 import Boundary.Helpers.GUIHelper;
+import Controller.ValidationUserInput;
 import Entity.Employee;
 
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -50,6 +54,8 @@ public class EmployeeTabGUI extends JPanel {
 	private DefaultTableModel tm;
 	
 	private ListSelectionListener lsl;
+	
+	private Map<String, JTextComponent> requiredTextFields = new HashMap<String, JTextComponent>();
 	
 	private EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
 	
@@ -122,6 +128,38 @@ public class EmployeeTabGUI extends JPanel {
 		//setup buttons
 		GUIHelper.enableButtons(new JButton[] {btnAdd});
 		GUIHelper.disableButtons(new JButton[] {btnUpdate});
+	}
+	
+	//validate required fields
+	private boolean validateRequiredFields() {
+		
+		//check required fields
+		String validationResult = ValidationUserInput.validateRequiredTextFields(requiredTextFields);
+		if(validationResult.equals(ValidationUserInput.VALID) == false) {
+			
+			//notify error and stop
+			MainForm.showMessage(validationResult + "\nPlease try again!");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	//set data from UI to an an employee
+	private Employee setUserInputDataToEmployee(Employee emp) {
+		
+		emp.setFirstName(empFirstNameTxtBox.getText());
+		emp.setLastName(empLastNameTxtBox.getText());
+		emp.setDob(empDob.getDate());
+		emp.setPhone(empPhoneNumberTxtBox.getText());
+		emp.setAddress(empAddressTxtArea.getText());
+		emp.setEmail(empEmailTxtBox.getText());
+		emp.setPassword(empPasswordTxtBox.getText());
+		emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
+		emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
+		emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+
+		return emp;
 	}
 	
 	/**
@@ -258,10 +296,10 @@ public class EmployeeTabGUI extends JPanel {
 		comboBoxRole = new JComboBox();
 		comboBoxRole.setBounds(93, 50, 116, 20);
 		panel.add(comboBoxRole);
-		comboBoxRole.addItem("Admin");
 		comboBoxRole.addItem("Receptionist");
 		comboBoxRole.addItem("Doctor");
 		comboBoxRole.addItem("Technologist");
+		comboBoxRole.addItem("Admin");
 		
 		btnAdd = new JButton("Add");
 		btnAdd.setForeground(Color.GREEN);
@@ -304,27 +342,17 @@ public class EmployeeTabGUI extends JPanel {
 		//update an employee
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//check id is available
-				if(empIdTxtBox.getText().equals("")) {
-					MainForm.showMessage("Employee Id cannot be blank\nPlease select an employee!");
-					return;
-				}
+				
+				//check required fields, stop if fail
+				if(validateRequiredFields() == false) return;
+				
 				
 				Employee emp = employeeDAO.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
 				
 				if(emp ==  null) return;//can not get employee
 				
-				//update
-				emp.setFirstName(empFirstNameTxtBox.getText());
-				emp.setLastName(empLastNameTxtBox.getText());
-				emp.setDob(empDob.getDate());
-				emp.setPhone(empPhoneNumberTxtBox.getText());
-				emp.setAddress(empAddressTxtArea.getText());
-				emp.setEmail(empEmailTxtBox.getText());
-				emp.setPassword(empPasswordTxtBox.getText());
-				emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
-				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
-				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				//update user input data to emp
+				emp = setUserInputDataToEmployee(emp);
 				
 				if(employeeDAO.updateEmployee(emp))
 					updateTable();
@@ -339,25 +367,13 @@ public class EmployeeTabGUI extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				
-				//check required fields email & passwords
-				if(empEmailTxtBox.getText().equals("") ||
-						empPasswordTxtBox.getText().equals("")) {
-					MainForm.showMessage("Email and Password cannot be empty.\nPlease try again!");
-					return;
-				}
+				//check required fields, stop if fail
+				if(validateRequiredFields() == false) return;
 				
 				Employee emp =  new Employee();
 				
-				emp.setFirstName(empFirstNameTxtBox.getText());
-				emp.setLastName(empLastNameTxtBox.getText());
-				emp.setDob(empDob.getDate());
-				emp.setPhone(empPhoneNumberTxtBox.getText());
-				emp.setAddress(empAddressTxtArea.getText());
-				emp.setEmail(empEmailTxtBox.getText());
-				emp.setPassword(empPasswordTxtBox.getText());
-				emp.setStatus(chckbxDisable.isSelected()? Employee.STATUS_DISABLE : Employee.STATUS_ENABLE);
-				emp.setRole(Employee.ROLE_MAP.get(comboBoxRole.getSelectedItem()));
-				emp.setGender(Employee.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+				//set user input data to emp
+				emp = setUserInputDataToEmployee(emp);
 	
 				int newEmpId = employeeDAO.addEmployee(emp);
 				
@@ -371,7 +387,15 @@ public class EmployeeTabGUI extends JPanel {
 				}
 			}
 		});
-
+		
+		//create required fields hash map
+		requiredTextFields.put("First Name", empFirstNameTxtBox);
+		requiredTextFields.put("Last Name", empLastNameTxtBox);
+		requiredTextFields.put("Phone", empPhoneNumberTxtBox);
+		requiredTextFields.put("Address", empAddressTxtArea);
+		requiredTextFields.put("Email", empEmailTxtBox);
+		requiredTextFields.put("Password", empPasswordTxtBox);
+		
 		//update table
 		clearForm();
 		updateTable();
