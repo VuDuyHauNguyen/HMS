@@ -13,6 +13,8 @@ import Entity.Appointment;
 
 public class AppointmentDAOImpl {
 	
+	public static int ERROR_ADD = -1;
+	
 	//CREATE
 	public int addAppointment(Appointment appointment) {
 		//Initialize variables
@@ -20,7 +22,7 @@ public class AppointmentDAOImpl {
 		Session sx = null;
 		Transaction tx = null;
 		
-		Integer appInteger = -1;
+		Integer appInteger = ERROR_ADD;
 		
 		try {
 			fx = HibernateFactory.getFactory();

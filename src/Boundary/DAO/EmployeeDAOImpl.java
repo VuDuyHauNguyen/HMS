@@ -12,6 +12,8 @@ import Entity.Employee;
 
 public class EmployeeDAOImpl {
 	
+	public static int ERROR_ADD = -1;
+	
 	//CREATE
 	public int addEmployee(Employee e) {
 		//Initialize variables
@@ -19,7 +21,7 @@ public class EmployeeDAOImpl {
 		Session sx = null;
 		Transaction tx = null;
 		
-		Integer employeeId = -1;
+		Integer employeeId = ERROR_ADD;
 		
 		try {
 			fx = HibernateFactory.getFactory();

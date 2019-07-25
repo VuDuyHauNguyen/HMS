@@ -11,6 +11,8 @@ import Entity.Patient;
 
 public class PatientDAOImpl {
 
+	public static int ERROR_ADD = -1;
+	
 	//CREATE
 	public int addPatient(Patient p) {
 		//Initialize variables
@@ -18,7 +20,7 @@ public class PatientDAOImpl {
 		Session sx = null;
 		Transaction tx = null;
 		
-		Integer patientId = -1;
+		Integer patientId = ERROR_ADD;
 		
 		try {
 			fx = HibernateFactory.getFactory();

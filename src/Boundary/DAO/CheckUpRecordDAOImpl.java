@@ -11,6 +11,8 @@ import Entity.CheckUpRecord;
 
 public class CheckUpRecordDAOImpl {
 	
+	public static int ERROR_ADD = -1;
+	
 	//CREATE 
 	public int addCheckUpRecord(CheckUpRecord checkUpRecord) {
 		//Initialize variables
@@ -18,7 +20,7 @@ public class CheckUpRecordDAOImpl {
 		Session sx = null;
 		Transaction tx = null;
 		
-		Integer appInteger = -1;
+		Integer appInteger = ERROR_ADD;
 		
 		try {
 			fx = HibernateFactory.getFactory();
