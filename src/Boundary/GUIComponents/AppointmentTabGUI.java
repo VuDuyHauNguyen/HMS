@@ -7,6 +7,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -113,6 +114,8 @@ public class AppointmentTabGUI extends JPanel {
 		scrollPane.setBounds(10, 11, 733, 620);
 		add(scrollPane);
 		tableAppointment = new JTable();
+		tableAppointment.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableAppointment.setDefaultEditor(Object.class, null);//cannot edit table
 		scrollPane.setViewportView(tableAppointment);
 		
 		JPanel panel = new JPanel();
@@ -235,7 +238,7 @@ public class AppointmentTabGUI extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				
-				tableAppointment.setEnabled(false);
+				tableAppointment.setEnabled(false);//disable table
 				
 				// TODO Auto-generated method stub
 				int currId = (int) tableAppointment.getValueAt(tableAppointment.getSelectedRow(), 0);//1st column
@@ -264,7 +267,7 @@ public class AppointmentTabGUI extends JPanel {
 				
 				
 				updateCurrentAppointmentInfo(currentAppointment);
-				tableAppointment.setEnabled(true);
+				tableAppointment.setEnabled(true);//enable table
 			}
 		};
 		

@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -26,7 +27,7 @@ import java.awt.Color;
 
 public class PatientRecordsTabGUI extends JPanel {
 	
-	private JTable tableCheckUpInQueue;
+	private JTable tableCheckUpRecords;
 	private JTextField doctorIdTxtBox;	
 	private JTextField patientIdTxtBox;
 	private JTextField checkUpIdTxtBox;
@@ -44,7 +45,7 @@ public class PatientRecordsTabGUI extends JPanel {
 	
 	public void updateTable(ArrayList<CheckUpRecord> checkUpRecordsToDisplay) {
 		//remove listener
-		tableCheckUpInQueue.getSelectionModel().removeListSelectionListener(lsl);
+		tableCheckUpRecords.getSelectionModel().removeListSelectionListener(lsl);
 		
 		//array of column names in the table
 		String[] columnNames = {"Id", "Patient Id", "Doctor Id", "Date", "Time",
@@ -53,12 +54,12 @@ public class PatientRecordsTabGUI extends JPanel {
 		//create a DefaultTableModel object
 		tm = GUIHelper.populateTableModel(columnNames, checkUpRecordsToDisplay);
 		
-		tableCheckUpInQueue.setModel(tm);
+		tableCheckUpRecords.setModel(tm);
 		
-		tableCheckUpInQueue.setRowSorter(new TableRowSorter(tm));
+		tableCheckUpRecords.setRowSorter(new TableRowSorter(tm));
 		
 		//add listener
-		tableCheckUpInQueue.getSelectionModel().addListSelectionListener(lsl);
+		tableCheckUpRecords.getSelectionModel().addListSelectionListener(lsl);
 	}
 	
 	private void updateCurrentAppointmentInfo(CheckUpRecord checkUpRecord) {
@@ -95,9 +96,10 @@ public class PatientRecordsTabGUI extends JPanel {
 		scrollPane.setEnabled(false);
 		scrollPane.setBounds(10, 11, 733, 620);
 		add(scrollPane);
-		tableCheckUpInQueue = new JTable();
-
-		scrollPane.setViewportView(tableCheckUpInQueue);
+		tableCheckUpRecords = new JTable();
+		tableCheckUpRecords.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableCheckUpRecords.setDefaultEditor(Object.class, null);//cannot edit table
+		scrollPane.setViewportView(tableCheckUpRecords);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Patient Record Detail", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -199,7 +201,7 @@ public class PatientRecordsTabGUI extends JPanel {
 			public void valueChanged(ListSelectionEvent e) {
 				
 				//else try to find the selected checkUpRecord	
-				int currId = (int) tableCheckUpInQueue.getValueAt(tableCheckUpInQueue.getSelectedRow(), 0);//1st column
+				int currId = (int) tableCheckUpRecords.getValueAt(tableCheckUpRecords.getSelectedRow(), 0);//1st column
 				
 				//get the checkUpRecord
 				currentCheckUpRecord = checkUpRecordDAO.getCheckUpRecordById(currId);
@@ -253,7 +255,6 @@ public class PatientRecordsTabGUI extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				//reset UIs
-				clearForm();
 				updateTable(checkUpRecordDAO.getAllHistoryCheckUpRecords());
 			}
 		});

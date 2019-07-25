@@ -27,6 +27,8 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.border.TitledBorder;
+import java.awt.Color;
+import javax.swing.ListSelectionModel;
 
 public class PatientTabGUI extends JPanel {
 	
@@ -36,6 +38,7 @@ public class PatientTabGUI extends JPanel {
 	private JDateChooser patientDob;
 	private JTextArea patientAddressTextArea;
 	private JComboBox comboBoxGender;
+	private JButton btnAdd, btnUpdate, btnClear;
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
@@ -78,6 +81,21 @@ public class PatientTabGUI extends JPanel {
 			}
 		}
 	}
+	
+	private void clearForm() {
+		patientIdTxtBox.setText("");
+		patientFirstNameTxtBox.setText("");
+		patientLastNameTxtBox.setText("");
+		patientDob.setDate(null);
+		patientPhoneNumTxtBox.setText("");
+		patientAddressTextArea.setText("");
+		patientEmailTxtBox.setText("");
+		comboBoxGender.setSelectedIndex(0);
+		
+		//setup buttons
+		GUIHelper.enableButtons(new JButton[] {btnAdd});
+		GUIHelper.disableButtons(new JButton[] {btnUpdate});
+	}
 
 	public PatientTabGUI() {
 		
@@ -88,13 +106,21 @@ public class PatientTabGUI extends JPanel {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
+				
+				tablePatients.setEnabled(false);//disable table
+				
 				int currId = (int) tablePatients.getValueAt(tablePatients.getSelectedRow(), 0);//1st column
 				
 				//get the patient
 				Patient patient = patientDAO.getPatientById(currId);
 				
 				updateCurrentPatientInfo(patient);
+				
+				//setup buttons
+				GUIHelper.disableButtons(new JButton[] {btnAdd});
+				GUIHelper.enableButtons(new JButton[] {btnUpdate});
+				
+				tablePatients.setEnabled(true);//enable table
 			}
 		};
 		
@@ -104,6 +130,8 @@ public class PatientTabGUI extends JPanel {
 		add(scrollPane);
 		
 		tablePatients = new JTable();
+		tablePatients.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tablePatients.setDefaultEditor(Object.class, null);//cannot edit table
 		scrollPane.setViewportView(tablePatients);
 		
 		JPanel patientFormPanel = new JPanel();
@@ -190,15 +218,17 @@ public class PatientTabGUI extends JPanel {
 		patientFormPanel.add(patientAddressTextArea);
 		patientAddressTextArea.setLineWrap(true);
 		
-		JButton btnUpdate = new JButton("Update");
+		btnUpdate = new JButton("Update");
+		btnUpdate.setForeground(Color.BLUE);
 		btnUpdate.setBounds(83, 276, 116, 29);
 		patientFormPanel.add(btnUpdate);
 		
-		JButton btnClearForm = new JButton("Clear Form");
-		btnClearForm.setBounds(6, 347, 116, 29);
-		patientFormPanel.add(btnClearForm);
+		btnClear = new JButton("Clear Form");
+		btnClear.setBounds(6, 347, 116, 29);
+		patientFormPanel.add(btnClear);
 		
-		JButton btnAdd = new JButton("Add");
+		btnAdd = new JButton("Add");
+		btnAdd.setForeground(Color.GREEN);
 		btnAdd.setBounds(125, 347, 74, 29);
 		patientFormPanel.add(btnAdd);
 		
@@ -206,6 +236,8 @@ public class PatientTabGUI extends JPanel {
 		lblId.setBounds(10, 28, 55, 16);
 		patientFormPanel.add(lblId);
 		lblId.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		
+		//add new patient
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//add a patient
@@ -223,24 +255,21 @@ public class PatientTabGUI extends JPanel {
 				if(newPatientId < 0) {
 					MainForm.showMessage("Cannot create a patient.\nPlease try again!");
 				}else {
-					updateCurrentPatientInfo(patientDAO.getPatientById(newPatientId));
 					updateTable();
+					clearForm();
 				}
 			}
 		});
-		btnClearForm.addActionListener(new ActionListener() {
+		
+		//clear form
+		btnClear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//clear patient form
-				patientIdTxtBox.setText("");
-				patientFirstNameTxtBox.setText("");
-				patientLastNameTxtBox.setText("");
-				patientDob.setDate(null);
-				patientPhoneNumTxtBox.setText("");
-				patientAddressTextArea.setText("");
-				patientEmailTxtBox.setText("");
-				comboBoxGender.setSelectedIndex(0);
+				clearForm();
 			}
 		});
+		
+		//update patient
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//update a patient
@@ -275,5 +304,6 @@ public class PatientTabGUI extends JPanel {
 		
 		//update patients table
 		updateTable();
+		clearForm();
 	}
 }

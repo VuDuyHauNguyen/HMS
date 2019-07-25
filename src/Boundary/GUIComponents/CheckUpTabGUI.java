@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -95,7 +96,8 @@ public class CheckUpTabGUI extends JPanel {
 		scrollPane.setBounds(10, 11, 733, 620);
 		add(scrollPane);
 		tableCheckUpInQueue = new JTable();
-
+		tableCheckUpInQueue.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableCheckUpInQueue.setDefaultEditor(Object.class, null);//cannot edit table
 		scrollPane.setViewportView(tableCheckUpInQueue);
 		
 		JPanel panel = new JPanel();
@@ -204,11 +206,14 @@ public class CheckUpTabGUI extends JPanel {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				
+				tableCheckUpInQueue.setEnabled(false);//disable table
+				
 				//check if the doctor has selected a patient
 				//or checkUpRecordId text box has value
 				if(checkUpIdTxtBox.getText().toString().equals("") == false) {
 					MainForm.showMessage("Please finish the check up before moving on another one!"
 							+ "\nOr click Cancel button to return the patient to the Check Up Queue.");
+					tableCheckUpInQueue.setEnabled(true);//enable table
 					return;
 				}
 				
@@ -228,6 +233,7 @@ public class CheckUpTabGUI extends JPanel {
 				}
 				
 				updateTable();
+				tableCheckUpInQueue.setEnabled(true);//enable table
 			}
 		};
 		

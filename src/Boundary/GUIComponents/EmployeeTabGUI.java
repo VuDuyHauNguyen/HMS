@@ -3,6 +3,7 @@ package Boundary.GUIComponents;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -27,6 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
+import java.awt.Color;
 
 public class EmployeeTabGUI extends JPanel {
 
@@ -42,6 +44,8 @@ public class EmployeeTabGUI extends JPanel {
 	private JComboBox comboBoxGender, comboBoxRole;
 	
 	private JCheckBox chckbxDisable;
+	
+	private JButton btnAdd, btnUpdate, btnClear;
 	
 	private DefaultTableModel tm;
 	
@@ -102,6 +106,24 @@ public class EmployeeTabGUI extends JPanel {
 			chckbxDisable.setSelected(true);
 	}
 	
+	private void clearForm() {
+		empIdTxtBox.setText("");
+		empFirstNameTxtBox.setText("");
+		empLastNameTxtBox.setText("");
+		empDob.setDate(null);
+		empPhoneNumberTxtBox.setText("");
+		empAddressTxtArea.setText("");
+		empEmailTxtBox.setText("");
+		empPasswordTxtBox.setText("");
+		comboBoxRole.setSelectedIndex(0);
+		comboBoxGender.setSelectedIndex(0);
+		chckbxDisable.setSelected(false);
+		
+		//setup buttons
+		GUIHelper.enableButtons(new JButton[] {btnAdd});
+		GUIHelper.disableButtons(new JButton[] {btnUpdate});
+	}
+	
 	/**
 	 * Create the panel.
 	 */
@@ -113,13 +135,21 @@ public class EmployeeTabGUI extends JPanel {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				// TODO Auto-generated method stub
+				
+				tableEmployees.setEnabled(false);//disable table to prevent further click
+				
 				int currId = (int) tableEmployees.getValueAt(tableEmployees.getSelectedRow(), 0);//1st column
 				
 				//get the employee
 				Employee emp = employeeDAO.getEmployeeById(currId);
 				
 				updateCurrentEmployeeInfo(emp);
+				
+				//setup buttons
+				GUIHelper.disableButtons(new JButton[] {btnAdd});
+				GUIHelper.enableButtons(new JButton[] {btnUpdate});
+				
+				tableEmployees.setEnabled(true);//enable table
 			}
 		};
 		
@@ -129,6 +159,8 @@ public class EmployeeTabGUI extends JPanel {
 		add(scrollPane);
 				
 		tableEmployees = new JTable();
+		tableEmployees.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableEmployees.setDefaultEditor(Object.class, null);//cannot edit table
 		scrollPane.setViewportView(tableEmployees);
 		
 		JPanel panel = new JPanel();
@@ -231,11 +263,13 @@ public class EmployeeTabGUI extends JPanel {
 		comboBoxRole.addItem("Doctor");
 		comboBoxRole.addItem("Technologist");
 		
-		JButton btnAdd = new JButton("Add");
+		btnAdd = new JButton("Add");
+		btnAdd.setForeground(Color.GREEN);
 		btnAdd.setBounds(125, 365, 84, 29);
 		panel.add(btnAdd);
 		
-		JButton btnUpdate = new JButton("Update");
+		btnUpdate = new JButton("Update");
+		btnUpdate.setForeground(Color.BLUE);
 		btnUpdate.setBounds(93, 317, 116, 29);
 		panel.add(btnUpdate);
 		
@@ -254,26 +288,20 @@ public class EmployeeTabGUI extends JPanel {
 		panel.add(empPasswordTxtBox);
 		empPasswordTxtBox.setColumns(10);
 		
-		JButton btnClear = new JButton("Clear Form");
+		btnClear = new JButton("Clear Form");
 		btnClear.setBounds(6, 365, 116, 29);
 		panel.add(btnClear);
+		
+		//clear form
 		btnClear.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				empIdTxtBox.setText("");
-				empFirstNameTxtBox.setText("");
-				empLastNameTxtBox.setText("");
-				empDob.setDate(null);
-				empPhoneNumberTxtBox.setText("");
-				empAddressTxtArea.setText("");
-				empEmailTxtBox.setText("");
-				empPasswordTxtBox.setText("");
-				comboBoxRole.setSelectedIndex(0);
-				comboBoxGender.setSelectedIndex(0);
-				chckbxDisable.setSelected(false);
+				clearForm();
 			}
 		});
+		
+		//update an employee
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//check id is available
@@ -304,6 +332,8 @@ public class EmployeeTabGUI extends JPanel {
 					MainForm.showMessage("Cannot update the employee.\nPlease try again!");
 			}
 		});
+		
+		//add new employee
 		btnAdd.addActionListener(new ActionListener() {
 			
 			@Override
@@ -336,13 +366,14 @@ public class EmployeeTabGUI extends JPanel {
 					empEmailTxtBox.requestFocus();//focus email field
 					empIdTxtBox.setText("");//clear Id
 				}else {
-					updateCurrentEmployeeInfo(employeeDAO.getEmployeeById(newEmpId));
 					updateTable();
+					clearForm();
 				}
 			}
 		});
 
 		//update table
+		clearForm();
 		updateTable();
 	}
 }
