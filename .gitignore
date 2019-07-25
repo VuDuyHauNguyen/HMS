@@ -56,3 +56,4 @@ local.properties
 
 # Auto generate database files
 database/todayAndUpcomingAppointments.sql
+database/historyCheckUpRecords.sql
