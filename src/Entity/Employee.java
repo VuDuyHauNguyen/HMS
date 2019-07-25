@@ -4,6 +4,7 @@ package Entity;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.swing.text.JTextComponent;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -167,12 +169,28 @@ public class Employee implements Vectorable{
 	public Vector getVector() {
 		Vector v = new Vector();
 		v.add(id);
-		v.add(role);
-		v.add(status);
+		
+		//display role as string
+		for (Map.Entry<String, Byte> roleEntry : ROLE_MAP.entrySet()) {
+			if(role == roleEntry.getValue()) {
+				v.add(roleEntry.getKey());
+				break;
+			}
+		}
+		
+		//display status as string
+		v.add(status > 0 ? "Enable" : "Disable");
 		v.add(firstName);
 		v.add(lastName);
 		v.add(dob);
-		v.add(gender);
+		
+		//display gender as string
+		for (Map.Entry<String, Character> genderEntry : GENDER_MAP.entrySet()) {
+			if(gender == genderEntry.getValue()) {
+				v.add(genderEntry.getKey());
+				break;
+			}
+		}
 		v.add(email);
 		v.add(phone);
 		v.add(address);
