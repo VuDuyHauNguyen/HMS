@@ -33,6 +33,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JTextArea;
 import java.awt.Color;
 
+/**
+ * This class is the GUI Tab for Appointment.
+ * @author Beau (10635)
+ * @author Hau Ngyyen
+ *
+ */
 public class AppointmentTabGUI extends JPanel {
 	
 	private JTable tableAppointment;
