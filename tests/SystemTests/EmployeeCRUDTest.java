@@ -1,9 +1,10 @@
 package SystemTests;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.Date;
 import Boundary.DAO.EmployeeDAOImpl;
+import Boundary.Helpers.DateTimeHelper;
 import Entity.Employee;
 
 /**
@@ -11,95 +12,140 @@ import Entity.Employee;
  * @author Beau (10635)
  * This class will test out the CRUD Operations for
  * the employees.
- * @version 0.2 - Added the appropriate assertTrue methods for testing.
+ * @version 0.3 - Re-did the class, based it on Hau Nguyen's
+ * design (with permission).
  */
-class EmployeeCRUDTest {
-	private Employee e = new Employee();
+class EmployeeCRUDTest {	
 	private EmployeeDAOImpl empDAO = new EmployeeDAOImpl();
-	
-	@BeforeEach
-	void setUp() throws Exception {
-		empDAO = new EmployeeDAOImpl();		
-	}
-	
+	// Creating the fields for testing.
+	private final String 	firstName ="Bob",
+							lastName = "Smith",
+							phone = "111-222-333-4444",							
+							email = "bobsmith@somewhereawesome.com",
+							address = "11111 Someplace Way,\n"
+									   + "Somewhere, Nowhere, Canada (Up North";
+	private final Date dob = DateTimeHelper.getDateFromString("1977-01-01 14:30:00");	
+		
 	@Test
 	void addEmployee() {
-		int newEmpID = empDAO.addEmployee(e);
-		Employee recentAddedEmp = new Employee();
-		recentAddedEmp = empDAO.getEmployeeById(newEmpID);
-		
-		e.setFirstName("Bob");
-		assertTrue(recentAddedEmp.getFirstName() == "Bob");
-		e.setLastName("Smith");
-		assertTrue(recentAddedEmp.getLastName().equals("Smith"));
-		e.setAddress("11111 Someplace Way,\n"
-				   + "Somewhere, Nowhere, Canada (Up North");
-		assertTrue(recentAddedEmp.getAddress()
-				.equals("11111 Someplace Way,\n"
-				+ "Somewhere, Nowhere, Canada (Up North"));
-		e.setDob(null);
-		assertTrue(recentAddedEmp.getDob().equals(null));
-		e.setAppointments(null);
-		assertTrue(recentAddedEmp.getAppointments().equals(null));
-		e.setEmail("bobsmith@somewhereawesome.com");
-		assertTrue(recentAddedEmp.getEmail().equals("bobsmith@somewhereawesome.com"));
-		e.setGender('m');
-		assertTrue(recentAddedEmp.getGender() == 'm');
-		e.setPhone("111-222-333-4444");
-		assertTrue(recentAddedEmp.getPhone().equals("111-222-333-4444"));
-		empDAO.addEmployee(e);
-		assertEquals(empDAO.addEmployee(recentAddedEmp), true);
+		Employee e = new Employee();
+		System.out.println("Beginning CREATE an employee test.");		
+		e.setFirstName(firstName);
+		e.setLastName(lastName);
+		e.setPhone(phone);							
+		e.setEmail(email);
+		e.setAddress(address);
+		e.setGender(Employee.GENDER_MALE);
+		e.setDob(dob);
+		// Add an employee to the database.
+		int recentEmpID = empDAO.addEmployee(e);
+		assertTrue(recentEmpID != EmployeeDAOImpl.ERROR_ADD);		
 	}
 	
 	@Test
-	void deleteEmployee() {		
-		e.setFirstName("Rob");
-		e.setLastName("Smythe");
-		e.setAddress("11111 Someplace Way,\n"
-				   + "Somewhere, Nowhere, Canada (Up North");
-		e.setDob(null);
-		e.setAppointments(null);
-		e.setEmail("robsmythe@somewhereawesome.com");
-		e.setGender('f');
-		e.setPhone("998-777-796-5654");		
-		empDAO.deleteEmployee(e);
-		assertTrue(empDAO.deleteEmployee(e) == true);
+	void readEmployee() {
+		Employee e = new Employee();
+		System.out.println("Begginning test sequence to READ an employee.");
+		e.setFirstName(firstName);
+		e.setLastName(lastName);
+		e.setPhone(phone);							
+		e.setEmail(email);
+		e.setAddress(address);
+		e.setGender(e.GENDER_MALE);
+		e.setDob(dob);
+		
+		// Add Employee to the database.
+		int recentEmpID = empDAO.addEmployee(e);
+		assertTrue(recentEmpID != EmployeeDAOImpl.ERROR_ADD);
+		
+		// Read recent added Employee from the database.
+		e = empDAO.getEmployeeById(recentEmpID);
+		
+		// Asserts fields to see if the current
+		// employee is on the database.
+		assertTrue(e.getFirstName().equals(firstName));
+		assertTrue(e.getLastName().equals(lastName));
+		assertTrue(e.getPhone().equals(phone));
+		assertTrue(e.getEmail().equals(email));
+		assertTrue(e.getAddress().equals(address));
+		assertTrue(e.getGender() == e.GENDER_MALE);
+		assertTrue(e.getDob().equals(dob));		
 	}
 	
 	@Test
-	void addEmployeeForUpdating() {
-		int newEmpID = empDAO.addEmployee(e);
-		Employee recentAddedEmp = 
-		empDAO.getEmployeeById(newEmpID);
+	void updateEmployee() {
+		Employee e = new Employee();
+		System.out.println("Testing an UPDATE for an employee.");
+		// Create an employee.
+		e.setFirstName(firstName);
+		e.setLastName(lastName);
+		e.setPhone(phone);							
+		e.setEmail(email);
+		e.setAddress(address);
+		e.setGender(e.GENDER_MALE);
+		e.setDob(dob);
 		
-		e.setFirstName("Bill");
-		assertTrue(recentAddedEmp.getFirstName() == "Bill");
-		e.setLastName("Swanson");
-		assertTrue(recentAddedEmp.getLastName() == "Swanson");
-		e.setAddress("11111 Area 51,\n"
-				   + "Somewhere, Nowhere, United States");
-		assertTrue(recentAddedEmp.getAddress() == "11111 Area 51,\n"
-				   + "Somewhere, Nowhere, United States");
-		e.setDob(null);
-		assertTrue(recentAddedEmp.getDob() == null);
-		e.setAppointments(null);
-		assertTrue(recentAddedEmp.getAppointments() == null);
-		e.setEmail("bswanson@someemail.org");
-		assertTrue(recentAddedEmp.getEmail() == "bswanson@someemail.org");
-		e.setGender('m');
-		assertTrue(recentAddedEmp.getGender() == 'm');
-		e.setPhone("555-666-777-888-9999");
-		assertTrue(recentAddedEmp.getPhone() == "555-666-777-888-9999");		
+		// Add an employee to the database.
+		int recentEmpID = empDAO.addEmployee(e);
+		assertTrue(recentEmpID != EmployeeDAOImpl.ERROR_ADD);
 		
-		// Add the employee for updating.
-		empDAO.addEmployee(e);
+		// Read the recent employee from the database. 
+		e = empDAO.getEmployeeById(recentEmpID);
+		
+		// Set some new values for the Employee object
+		// 'e'
+		e.setFirstName(firstName + "new");
+		e.setLastName(lastName + "new");
+		e.setPhone(phone + "new");							
+		e.setEmail(email + "new");
+		e.setAddress(address + "new");
+		e.setGender(e.GENDER_MALE);
+		e.setDob(DateTimeHelper.getDateFromString("1985-01-31 15:00:00"));
+		// Create a boolean variable to varify the result.
+		boolean empResult = empDAO.updateEmployee(e);
+		// Verify if the condition is true.
+		assertTrue(empResult);
+		
+		// Read recently updated employee.
+		e = empDAO.getEmployeeById(recentEmpID);
+		
+		// Assert to see the recently updated object
+		// is updated from the previous Employee object.
+		assertTrue(e.getFirstName().equals(firstName + "new"));
+		assertTrue(e.getLastName().equals(lastName + "new"));
+		assertTrue(e.getPhone().equals(phone + "new"));
+		assertTrue(e.getEmail().equals(email + "new"));
+		assertTrue(e.getAddress().equals(address + "new"));
+		assertTrue(e.getGender() == e.GENDER_FEMALE);
+		assertTrue(e.getDob().equals(DateTimeHelper.getDateFromString("1985-01-31 15:00:00")));	
 	}
+	
 	@Test
-	void updateEmployee() {		
-		int newEmpID = empDAO.addEmployee(e);
-		Employee recentAddedEmp = 
-		empDAO.getEmployeeById(newEmpID);
-		e.setPhone("505-616-727-838-9449");		
-		assertTrue(recentAddedEmp.getPhone() == "505-616-727-838-9449");
+	void deleteEmployee() {
+		Employee e = new Employee();
+		System.out.println("Beginning delete test for employee.");
+		// Create an employee.
+		e.setFirstName(firstName);
+		e.setLastName(lastName);
+		e.setPhone(phone);							
+		e.setEmail(email);
+		e.setAddress(address);
+		e.setDob(dob);
+		
+		// Add an employee to database.
+		int recentEmpID = empDAO.addEmployee(e);
+		assertTrue(recentEmpID != EmployeeDAOImpl.ERROR_ADD);
+		
+		// Read a recently added employee to database.		
+		Employee recentEmp = empDAO.getEmployeeById(recentEmpID);
+		assertTrue(recentEmp != null, "should get Employee object.");
+		
+		// Delete recent added Employee
+		boolean delEmpResult = empDAO.deleteEmployee(e);
+		assertTrue(delEmpResult);
+		
+		// Read recently deleted Employee.
+		Employee deletedEmp = empDAO.getEmployeeById(recentEmpID);
+		assertTrue(deletedEmp == null, "Employee object should not be present.");
 	}	
 }
