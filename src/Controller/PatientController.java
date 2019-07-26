@@ -5,7 +5,8 @@ import Boundary.DAO.PatientDAOImpl;
 import Entity.Patient;
 
 public class PatientController {
-public static final String SUCCESS = "Success";
+	
+	public static final String SUCCESS = "Success";
 	
 	private static PatientDAOImpl patientDAO = new PatientDAOImpl(); 
 	

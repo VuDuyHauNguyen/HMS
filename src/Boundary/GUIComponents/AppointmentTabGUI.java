@@ -16,16 +16,13 @@ import javax.swing.table.TableRowSorter;
 import com.toedter.calendar.JDateChooser;
 
 import Boundary.MainForm;
-import Boundary.DAO.AppointmentDAOImpl;
-import Boundary.DAO.CheckUpRecordDAOImpl;
-import Boundary.DAO.PatientDAOImpl;
 import Boundary.Helpers.DateTimeHelper;
 import Boundary.Helpers.GUIHelper;
+import Controller.AppointmentController;
 import Controller.Authentication;
+import Controller.PatientController;
+import Controller.ValidationUserInput;
 import Entity.Appointment;
-import Entity.CheckUpRecord;
-import Entity.Employee;
-import Entity.Patient;
 
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
@@ -47,9 +44,6 @@ public class AppointmentTabGUI extends JPanel {
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
-	private AppointmentDAOImpl appointmentDAO = new AppointmentDAOImpl();
-	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
-	private CheckUpRecordDAOImpl checkUpRecordDAO = new CheckUpRecordDAOImpl(); 
 	private JTextField statusTxtBox;
 	JTextArea textAreaMedicalProblems;
 	
@@ -65,15 +59,12 @@ public class AppointmentTabGUI extends JPanel {
 		String[] columnNames = {"Id", "Receptionist Id", "Patient Id", "Date", "Time", "Status"};
 		
 		//create a DefaultTableModel object
-		Employee loggedInUser = Authentication.getLoggedInEmployee();
-		if(loggedInUser.getRole() == Employee.ADMIN_ROLE)//display all appointments
-			tm = GUIHelper.populateTableModel(columnNames, appointmentDAO.getAllAppointments());
-		else//receptionist: display in-progress from today appointments only
-			tm = GUIHelper.populateTableModel(columnNames, appointmentDAO.getFromTodayAppointments());
+		tm = GUIHelper.populateTableModel(columnNames, 
+				AppointmentController.getAllAppointments());
 		
 		tableAppointment.setModel(tm);
 		
-		tableAppointment.setRowSorter(new TableRowSorter(tm));
+		tableAppointment.setRowSorter(new TableRowSorter<DefaultTableModel>(tm));
 		
 		//add listener
 		tableAppointment.getSelectionModel().addListSelectionListener(lsl);
@@ -104,6 +95,50 @@ public class AppointmentTabGUI extends JPanel {
 		
 		//reset currentAppointment
 		currentAppointment = null;
+	}
+	
+	//validate required fields
+	private boolean validateRequiredFields() {
+		
+		//check required fields
+		//Patient Id
+		String validationResult = ValidationUserInput.validateRequiredPositiveNumberField(
+				"Patient Id", patientIdTxtBox.getText().toString());
+		
+		if(validationResult.equals(ValidationUserInput.VALID) == false) {
+			
+			//notify error and stop
+			MainForm.showMessage(validationResult + "\nPlease try again!");
+			return false;
+		}
+		
+		//Appointment Time
+		validationResult = ValidationUserInput.validateRequiredDateField(
+				"Appointment Date", appointmentDate.getDate());
+		
+		if(validationResult.equals(ValidationUserInput.VALID) == false) {
+			
+			//notify error and stop
+			MainForm.showMessage(validationResult + "\nPlease try again!");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	//set user input data to appointment
+	private Appointment setUserInputDataToAppointment(Appointment appointment) {
+		
+		appointment.setReceptionist(Authentication.getLoggedInEmployee());
+		appointment.setPatient(PatientController.getPatientById(
+				Integer.parseInt(patientIdTxtBox.getText().toString())));
+		//build Date String with format "yyyy-MM-dd HH:mm:ss"
+		appointment.setAppointmentTime(DateTimeHelper.getDateFromString(
+				DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
+				" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
+				));
+		
+		return appointment;
 	}
 	
 	public AppointmentTabGUI() {
@@ -138,10 +173,10 @@ public class AppointmentTabGUI extends JPanel {
 		appointmentDate.setBounds(98, 113, 116, 22);
 		panel.add(appointmentDate);
 			
-		appmntRecptTimeCbox = new JComboBox();
+		appmntRecptTimeCbox = new JComboBox<String>();
 		appmntRecptTimeCbox.setBounds(98, 147, 116, 22);
 		panel.add(appmntRecptTimeCbox);
-		appmntRecptTimeCbox.setModel(new DefaultComboBoxModel(new String[] {"08:00", "08:15", "08:30", "08:45", "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", "16:00"}));
+		appmntRecptTimeCbox.setModel(new DefaultComboBoxModel<String>(new String[] {"08:00", "08:15", "08:30", "08:45", "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", "16:00"}));
 			
 		receptionistIdTxtBox = new JTextField();
 		receptionistIdTxtBox.setBounds(98, 51, 116, 22);
@@ -240,11 +275,10 @@ public class AppointmentTabGUI extends JPanel {
 				
 				tableAppointment.setEnabled(false);//disable table
 				
-				// TODO Auto-generated method stub
 				int currId = (int) tableAppointment.getValueAt(tableAppointment.getSelectedRow(), 0);//1st column
 				
 				//get the appointment
-				currentAppointment = appointmentDAO.getAppointmentById(currId);
+				currentAppointment = AppointmentController.getAppointmentById(currId);
 				
 				//setup buttons
 				GUIHelper.disableButtons(new JButton[] {btnAdd});
@@ -282,54 +316,29 @@ public class AppointmentTabGUI extends JPanel {
 		//update an appointment
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String appointmentIdStr = appointmentIdTxtBox.getText();
-				String patientIdStr = patientIdTxtBox.getText();
 				
-				//check ids are available
-				if(appointmentIdStr.equals("") ||
-						patientIdStr.equals("") || 
-						appointmentDate.getDate() == null) {
-					MainForm.showMessage("Appointment Id, Patient Id and Appointment Date cannot be blank\nPlease select an appointment!");
-					return;
+				if(currentAppointment == null) return;
+				
+				//check required fields, stop if fail
+				if(validateRequiredFields() == false) return;
+				
+				//set user input data to appointment
+				currentAppointment =  setUserInputDataToAppointment(currentAppointment);
+				
+				//update
+				String result = AppointmentController.updateAppointment(currentAppointment);
+				
+				//check result
+				if(result.equals(AppointmentController.SUCCESS)) {
+					MainForm.showMessage("Updated successfully!");
+					
+					//update UI
+					updateTable();
+					clearForm();
+				}else {
+					MainForm.showMessage(result);
 				}
-				
-				//cannot update appointmentTime to the past 
-				if(DateTimeHelper.getDateFromString(
-						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
-						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
-						).getTime() < (new Date()).getTime()) {
-					MainForm.showMessage("Cannot update an appointment in the past. Please try again!");
-					return;
-				}
-				
-				//get an appointment
-				Appointment appointment = appointmentDAO.getAppointmentById(
-						Integer.parseInt(appointmentIdStr));
-				
-				if(appointment == null) return;//cannot get the appointment
-				
-				//check patient id is valid
-				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdStr)); 
-				
-				if(patient == null) {
-					MainForm.showMessage("Patient Id is invalid. The patient may not exists.\nPlease try again!");
-					return;
-				}
-				
-				//update use the current logged in employee as a new receptionist
-				appointment.setReceptionist(Authentication.getLoggedInEmployee());
-				appointment.setPatient(patient);
-				//build Date String with format "yyyy-MM-dd HH:mm:ss"
-				appointment.setAppointmentTime(DateTimeHelper.getDateFromString(
-						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
-						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
-						));
-				
-				//update database
-				if(appointmentDAO.updateAppointment(appointment)) 
-					updateTable();//update UI
-				else
-					MainForm.showMessage("Cannot update the appointment\nPlease try again!");
+
 			}
 		});
 		
@@ -337,54 +346,28 @@ public class AppointmentTabGUI extends JPanel {
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				String patientIdStr = patientIdTxtBox.getText();
-				
-				//check patient id is available
-				if(patientIdStr.equals("") || 
-						appointmentDate.getDate() == null) {
-					MainForm.showMessage("Patient Id and Appointment Date cannot be blank\nPlease try again!");
-					return;
-				}
-				
-				//cannot create a new appointment in the past
-				if(DateTimeHelper.getDateFromString(
-						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
-						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
-						).getTime() < (new Date()).getTime()) {
-					MainForm.showMessage("Cannot create an appointment in the past. Please try again!");
-					return;
-				}
-				
-				//check patient id is valid
-				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdStr)); 
-				
-				if(patient == null) {
-					MainForm.showMessage("Patient Id is invalid. The patient may not exists.\nPlease try again!");
-					return;
-				}
+				//check required fields, stop if fail
+				if(validateRequiredFields() == false) return;
 				
 				//create new appointment
 				Appointment appointment = new Appointment();
 
-				//set fields
-				appointment.setReceptionist(Authentication.getLoggedInEmployee());
-				appointment.setPatient(patient);
-				//build Date String with format "yyyy-MM-dd HH:mm:ss"
-				appointment.setAppointmentTime(DateTimeHelper.getDateFromString(
-						DateTimeHelper.getDisplayDateFromDate(appointmentDate.getDate()) +
-						" " + appmntRecptTimeCbox.getSelectedItem() + ":00"
-						));
-				appointment.setStatus(Appointment.STATUS_BOOK);//default new appointment status
+				//set user input data to appointment
+				appointment =  setUserInputDataToAppointment(appointment);
 				
-				//add appointment to database
-				int newAppointment = appointmentDAO.addAppointment(appointment);
+				//add
+				String result = AppointmentController.addAppointment(appointment);
 				
-				if(newAppointment < 0) {
-					MainForm.showMessage("Cannot create an appointment.\nPlease try again!");
-				}else {//update UI
-					updateCurrentAppointmentInfo(appointment);
+				//check result
+				if(result.equals(AppointmentController.SUCCESS)) {
+					MainForm.showMessage("Added successfully!");
+					
+					//update UI
 					updateTable();
-				}		
+					clearForm();
+				}else {
+					MainForm.showMessage(result);
+				}
 			}
 		});
 		
@@ -392,19 +375,17 @@ public class AppointmentTabGUI extends JPanel {
 		btnCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				//check currentAppointment available
-				if(currentAppointment == null) return;
-				
-				//cancel appointment
-				currentAppointment.setStatus(Appointment.STATUS_CANCEL);
-				
 				//update database
-				if(appointmentDAO.updateAppointment(currentAppointment)) { 
+				String result = AppointmentController.cancelAppointment(currentAppointment);
+				
+				//check
+				if(result.equals(AppointmentController.SUCCESS)) { 
+					MainForm.showMessage("Cancel successfully!");
 					clearForm();
 					updateTable();//update UI
 				}
 				else
-					MainForm.showMessage("Cannot cancel the appointment\nPlease try again!");
+					MainForm.showMessage(result);
 			}
 		});
 		
@@ -412,36 +393,27 @@ public class AppointmentTabGUI extends JPanel {
 		btnEnterCheckUp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//check currentAppointment available
-				if(currentAppointment == null) return;
+				//check required fields
+				String medicalProblems = textAreaMedicalProblems.getText().toString();
+				String validateResult = ValidationUserInput.validateRequiredTextField(
+						"Medical Problems", medicalProblems);
 				
-				//update status of current appointment to 'done'
-				currentAppointment.setStatus(Appointment.STATUS_DONE);
-				if(appointmentDAO.updateAppointment(currentAppointment)) { 
+				if(validateResult.equals(ValidationUserInput.VALID) == false) {
+					MainForm.showMessage(validateResult);
+					return;
+				}
+				
+				//check in
+				String result = AppointmentController.checkInAppointment(
+						currentAppointment, medicalProblems);
+				
+				if(result.equals(AppointmentController.SUCCESS)) {
 					
-					//create a new check up record
-					CheckUpRecord checkUpRecord = new CheckUpRecord();
-					
-					//get medical problem
-					if(textAreaMedicalProblems.getText().toString().equals("")) {
-						MainForm.showMessage("Please enter patient's medical problems!");
-						return;
-					}
-					
-					checkUpRecord.setMedicalProblem(textAreaMedicalProblems.getText().toString());
-					
-					//set default data for the record
-					checkUpRecord.setId(currentAppointment.getId());
-					checkUpRecord.setPatient(currentAppointment.getPatient());
-					checkUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
-					
-					checkUpRecordDAO.addCheckUpRecord(checkUpRecord);
-					
+					MainForm.showMessage("Check-in successfully");
 					clearForm();
 					updateTable();//update UI
-				}
-				else
-					MainForm.showMessage("Cannot check-in\nPlease try again!");
+				}else 
+					MainForm.showMessage(result);
 				
 			}
 		});
