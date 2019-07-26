@@ -18,7 +18,7 @@ import Entity.Employee;
  * @version 0.2 - Added the appropriate assertTrue methods for testing.
  * 
  * @see [Line 42] To demonstrate this class, please change
- * the value from 1030 to a higher vlaue
+ * the value from 1030 to a higher value
  * 
  */
 class CheckInAnAppointmentTest {

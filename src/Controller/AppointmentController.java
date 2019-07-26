@@ -3,6 +3,7 @@ package Controller;
 import java.util.ArrayList;
 import java.util.Date;
 import Boundary.DAO.AppointmentDAOImpl;
+import Boundary.Helpers.DateTimeHelper;
 import Entity.Appointment;
 import Entity.CheckUpRecord;
 import Entity.Employee;
@@ -74,6 +75,18 @@ public class AppointmentController {
 	
 	//check in an appointment to enter check up
 	public static String checkInAppointment(Appointment appointment, String medicalProblem) {
+		
+		if(appointment.getStatus() == null ||
+				appointment.getStatus().equals(Appointment.STATUS_CANCEL) ||
+				appointment.getStatus().equals(Appointment.STATUS_DONE) ||
+				appointment.getAppointmentTime() == null ||
+				DateTimeHelper.getDisplayDateFromDate(appointment.getAppointmentTime())
+				.equals(DateTimeHelper.getDisplayDateFromDate(new Date())) == false)
+			return "Cannot check in with not today appointments\nPlease try again!";
+		
+		if(medicalProblem == null ||
+				medicalProblem.equals(""))
+			return "Cannot check in  without medical problems\nPlease try again!";
 		
 		//update appointment status to 'done'
 		appointment.setStatus(Appointment.STATUS_DONE);

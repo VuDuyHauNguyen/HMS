@@ -61,7 +61,7 @@ public class CheckUpTabGUI extends JPanel {
 		tableCheckUpInQueue.getSelectionModel().addListSelectionListener(lsl);
 	}
 	
-	private void updateCurrentAppointmentInfo(CheckUpRecord checkUpRecord) {
+	private void updateCurrentCheckUpInfo(CheckUpRecord checkUpRecord) {
 		checkUpIdTxtBox.setText(checkUpRecord.getId() + "");
 		doctorIdTxtBox.setText((checkUpRecord.getDoctor() != null) ?
 				checkUpRecord.getDoctor().getId() + "" : "");
@@ -228,7 +228,7 @@ public class CheckUpTabGUI extends JPanel {
 				else {
 					//setup buttons
 					GUIHelper.enableButtons(new JButton[] {btnCancel, btnDone});
-					updateCurrentAppointmentInfo(currentCheckUpRecord);
+					updateCurrentCheckUpInfo(currentCheckUpRecord);
 				}
 				
 				updateTable();
