@@ -1,6 +1,5 @@
 package Boundary.GUIComponents;
 
-
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.Font;
@@ -33,6 +32,13 @@ import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import javax.swing.ListSelectionModel;
 
+/**
+ * 
+ * This class is the GUI Tab for Patient.
+ * @author Beau (10635)
+ * @author Hau Nguyen
+ *
+ */ 
 public class PatientTabGUI extends JPanel {
 	
 	private JTable tablePatients;

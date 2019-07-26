@@ -26,7 +26,7 @@ import org.hibernate.annotations.FetchMode;
  * 06/12/19 - Removed a few unnecessary variables, then added the variables 
  * Date of Birth (dob), gender, and telephone (phone).
  * 
- * @author Beau 300010635
+ * @author Beau (10635)
  * @version 0.2
  *
  */
