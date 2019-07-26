@@ -2,7 +2,6 @@ package Boundary.DAO;
 
 import java.util.ArrayList;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -32,7 +31,7 @@ public class PatientDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			System.err.println(hx.getMessage());
 		}finally {
@@ -58,7 +57,7 @@ public class PatientDAOImpl {
 			//get a patient
 			patient = sx.get(Patient.class, id);
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -86,7 +85,7 @@ public class PatientDAOImpl {
 			patients = (ArrayList<Patient>) 
 					sx.createQuery("FROM Patient").list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -116,7 +115,7 @@ public class PatientDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());
@@ -147,7 +146,7 @@ public class PatientDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());

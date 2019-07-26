@@ -21,7 +21,7 @@ import Entity.Employee;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.swing.JButton;
@@ -55,7 +55,7 @@ public class EmployeeTabGUI extends JPanel {
 	
 	private ListSelectionListener lsl;
 	
-	private Map<String, JTextComponent> requiredTextFields = new HashMap<String, JTextComponent>();
+	private Map<String, JTextComponent> requiredTextFields = new LinkedHashMap<String, JTextComponent>();
 	
 	private void updateTable() {
 		//remove listener
@@ -143,7 +143,7 @@ public class EmployeeTabGUI extends JPanel {
 		return true;
 	}
 	
-	//set data from UI to an an employee
+	//set data from UI to an employee
 	private Employee setUserInputDataToEmployee(Employee emp) {
 		
 		emp.setFirstName(empFirstNameTxtBox.getText());
@@ -396,7 +396,7 @@ public class EmployeeTabGUI extends JPanel {
 			}
 		});
 		
-		//create required fields hash map
+		//create required fields map
 		requiredTextFields.put("First Name", empFirstNameTxtBox);
 		requiredTextFields.put("Last Name", empLastNameTxtBox);
 		requiredTextFields.put("Phone", empPhoneNumberTxtBox);
