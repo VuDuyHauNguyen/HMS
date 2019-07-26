@@ -3,7 +3,6 @@ package Boundary.DAO;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -34,7 +33,7 @@ public class AppointmentDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			System.err.println(hx.getMessage());
 		}finally {
@@ -60,7 +59,7 @@ public class AppointmentDAOImpl {
 			//get appointment
 			appointment = sx.get(Appointment.class, id);
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -88,7 +87,7 @@ public class AppointmentDAOImpl {
 			appointments = (ArrayList<Appointment>) 
 					sx.createQuery("FROM Appointment ORDER BY appointmentTime").list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -122,7 +121,7 @@ public class AppointmentDAOImpl {
 					.list(); 
 			
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -152,7 +151,7 @@ public class AppointmentDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());
@@ -183,7 +182,7 @@ public class AppointmentDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());

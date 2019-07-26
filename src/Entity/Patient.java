@@ -3,6 +3,7 @@ package Entity;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.persistence.Entity;
@@ -160,7 +161,14 @@ public class Patient implements Vectorable{
 		v.add(firstName);
 		v.add(lastName);
 		v.add(dob);
-		v.add(gender);
+		
+		//display gender as string
+		for (Map.Entry<String, Character> genderEntry : GENDER_MAP.entrySet()) {
+			if(gender == genderEntry.getValue()) {
+				v.add(genderEntry.getKey());
+				break;
+			}
+		}
 		v.add(email);
 		v.add(phone);
 		v.add(address);

@@ -94,7 +94,7 @@ public class MainForm {
 		
 		lbUser = new JLabel("admin");
 		lbUser.setHorizontalAlignment(SwingConstants.TRAILING);
-		lbUser.setBounds(585, 15, 300, 14);
+		lbUser.setBounds(224, 15, 661, 14);
 		frmHospitalManagementSystem.getContentPane().add(lbUser);
 		
 		JButton btnLogout = new JButton("Logout");
@@ -153,31 +153,28 @@ public class MainForm {
 		//prepare UI based on role		
 		switch(window.loggedinEmployee.getRole()) {
 			case Employee.ADMIN_ROLE:
-				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				//add UI based on roles
 				addTabs(new JPanel[] {panelManageEmployees, panelManagePatient, panelManageAppointment, panelCheckUp, panelViewPatientRecords}, 
 						new String[] {"Employees", "Patients", "Appointment", "Check Up", "Patient Records"});
 				break;
 			case Employee.RECEPTIONIST_ROLE:
 				//add UI based on roles
-				addTabs(new JPanel[] {panelManagePatient, panelManageAppointment}, new String[] {"Patients", "Appointment"});
-				
-				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
+				addTabs(new JPanel[] {panelManageAppointment, panelManagePatient}, new String[] {"Appointments", "Patients"});
 				break;
 			case Employee.DOCTOR_ROLE:
 				//add UI based on roles
-				addTabs(new JPanel[] {panelManagePatient, panelCheckUp, panelViewPatientRecords}, 
-						new String[] {"Patients", "Check Up", "Patient Records"});
+				addTabs(new JPanel[] {panelCheckUp, panelViewPatientRecords, panelManagePatient}, 
+						new String[] {"Check Up", "Patient Records", "Patients"});
 				
-				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				break;
 			case Employee.TECHNOLOGIST_ROLE:
 				//add UI based on roles
 				addTabs(new JPanel[] {panelManagePatient}, new String[] {"Patients"});
-				
-				window.lbUser.setText(window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 				break;
 		}
+		
+		window.lbUser.setText("Employee ID: [" + window.loggedinEmployee.getId() + "] " +
+				window.loggedinEmployee.getFirstName() + " " + window.loggedinEmployee.getLastName());
 		
 		//show main window
 		window.frmHospitalManagementSystem.setVisible(true);

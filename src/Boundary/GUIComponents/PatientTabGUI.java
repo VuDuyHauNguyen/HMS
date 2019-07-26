@@ -12,19 +12,22 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import javax.swing.text.JTextComponent;
 
 import com.toedter.calendar.JDateChooser;
 
 import Boundary.MainForm;
-import Boundary.DAO.PatientDAOImpl;
 import Boundary.Helpers.GUIHelper;
-import Controller.PatientValidation;
+import Controller.PatientController;
+import Controller.ValidationUserInput;
 import Entity.Patient;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
@@ -37,12 +40,13 @@ public class PatientTabGUI extends JPanel {
 		patientIdTxtBox, patientEmailTxtBox;
 	private JDateChooser patientDob;
 	private JTextArea patientAddressTextArea;
-	private JComboBox comboBoxGender;
+	private JComboBox<String> comboBoxGender;
 	private JButton btnAdd, btnUpdate, btnClear;
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
-	private PatientDAOImpl patientDAO = new PatientDAOImpl(); 
+	
+	private Map<String, JTextComponent> requiredTextFields = new LinkedHashMap<String, JTextComponent>();
 	
 	//update patient table
 	private void updateTable() {
@@ -53,11 +57,11 @@ public class PatientTabGUI extends JPanel {
 		String[] columnNames = {"Id", "First Name", "Last Name", "DOB", "Gender", "Email", "Phone", "Address"};
 		
 		//create a DefaultTableModel object
-		tm = GUIHelper.populateTableModel(columnNames, patientDAO.getAllPatients());
+		tm = GUIHelper.populateTableModel(columnNames, PatientController.getAllPatients());
 		
 		tablePatients.setModel(tm);
 		
-		tablePatients.setRowSorter(new TableRowSorter(tm));
+		tablePatients.setRowSorter(new TableRowSorter<DefaultTableModel>(tm));
 		
 		//add listener
 		tablePatients.getSelectionModel().addListSelectionListener(lsl);
@@ -96,6 +100,35 @@ public class PatientTabGUI extends JPanel {
 		GUIHelper.enableButtons(new JButton[] {btnAdd});
 		GUIHelper.disableButtons(new JButton[] {btnUpdate});
 	}
+	
+	//validate required fields
+	private boolean validateRequiredFields() {
+		
+		//check required fields
+		String validationResult = ValidationUserInput.validateRequiredTextFields(requiredTextFields);
+		if(validationResult.equals(ValidationUserInput.VALID) == false) {
+			
+			//notify error and stop
+			MainForm.showMessage(validationResult + "\nPlease try again!");
+			return false;
+		}
+		
+		return true;
+	}
+	
+	//set data from UI to an patient
+	private Patient setUserInputDataToPatient(Patient patient) {
+		
+		patient.setFirstName(patientFirstNameTxtBox.getText());
+		patient.setLastName(patientLastNameTxtBox.getText());
+		patient.setDob(patientDob.getDate());
+		patient.setPhone(patientPhoneNumTxtBox.getText());
+		patient.setAddress(patientAddressTextArea.getText());
+		patient.setEmail(patientEmailTxtBox.getText());
+		patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
+
+		return patient;
+	}
 
 	public PatientTabGUI() {
 		
@@ -112,7 +145,7 @@ public class PatientTabGUI extends JPanel {
 				int currId = (int) tablePatients.getValueAt(tablePatients.getSelectedRow(), 0);//1st column
 				
 				//get the patient
-				Patient patient = patientDAO.getPatientById(currId);
+				Patient patient = PatientController.getPatientById(currId);
 				
 				updateCurrentPatientInfo(patient);
 				
@@ -190,7 +223,6 @@ public class PatientTabGUI extends JPanel {
 		patientFormPanel.add(patientIdTxtBox);
 		patientIdTxtBox.setEnabled(false);
 		patientIdTxtBox.setColumns(10);
-		PatientValidation.validateEmail(patientIdTxtBox);
 		
 		JLabel lblAddress = new JLabel("Address:");
 		lblAddress.setBounds(10, 221, 52, 16);
@@ -206,7 +238,7 @@ public class PatientTabGUI extends JPanel {
 		patientDob.setBounds(83, 136, 116, 22);
 		patientFormPanel.add(patientDob);
 		
-		comboBoxGender = new JComboBox();
+		comboBoxGender = new JComboBox<String>();
 		comboBoxGender.setBounds(83, 109, 116, 20);
 		patientFormPanel.add(comboBoxGender);
 		comboBoxGender.addItem("Unknown");
@@ -240,23 +272,26 @@ public class PatientTabGUI extends JPanel {
 		//add new patient
 		btnAdd.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				//check required fields, stop if fail
+				if(validateRequiredFields() == false) return;
+				
 				//add a patient
 				Patient patient = new Patient();
-				patient.setFirstName(patientFirstNameTxtBox.getText());
-				patient.setLastName(patientLastNameTxtBox.getText());
-				patient.setDob(patientDob.getDate());
-				patient.setPhone(patientPhoneNumTxtBox.getText());
-				patient.setAddress(patientAddressTextArea.getText());
-				patient.setEmail(patientEmailTxtBox.getText());
-				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
 				
-				int newPatientId = patientDAO.addPatient(patient);
+				//update new data to patient
+				patient = setUserInputDataToPatient(patient);
 				
-				if(newPatientId < 0) {
-					MainForm.showMessage("Cannot create a patient.\nPlease try again!");
-				}else {
+				String result = PatientController.addPatient(patient);
+				
+				if(result.equals(PatientController.SUCCESS)) {
+					MainForm.showMessage("Added successfully!");
+					
+					//update UI
 					updateTable();
 					clearForm();
+				}else {
+					MainForm.showMessage(result);
 				}
 			}
 		});
@@ -272,35 +307,33 @@ public class PatientTabGUI extends JPanel {
 		//update patient
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//update a patient
-				//check id is available
-				if(patientIdTxtBox.getText().equals("")) {
-					MainForm.showMessage("Patient Id cannot be blank\nPlease select a patient!");
-					return;
+				
+				//check required fields, stop if fail
+				if(validateRequiredFields() == false) return;
+				
+				Patient patient = PatientController.getPatientById(Integer.parseInt(patientIdTxtBox.getText()));
+				
+				//update new data to patient
+				patient = setUserInputDataToPatient(patient);
+				
+				//update to database
+				String result = PatientController.updatePatient(patient);
+				
+				if(result.equals(PatientController.SUCCESS)) {
+					MainForm.showMessage("Updated successfully");
+					updateTable();
 				}
-				
-				Patient patient = patientDAO.getPatientById(Integer.parseInt(patientIdTxtBox.getText()));
-				
-				//update
-				patient.setFirstName(patientFirstNameTxtBox.getText());
-				patient.setLastName(patientLastNameTxtBox.getText());
-				patient.setDob(patientDob.getDate());
-				patient.setPhone(patientPhoneNumTxtBox.getText());
-				patient.setAddress(patientAddressTextArea.getText());
-				patient.setEmail(patientEmailTxtBox.getText());
-				patient.setGender(Patient.GENDER_MAP.get(comboBoxGender.getSelectedItem()));
-				
-				if(patientDAO.updatePatient(patient)) 
-					updateTable();//update UIs
-				else 
-					MainForm.showMessage("Cannot update the patient\nPlease try again!");
+				else
+					MainForm.showMessage(result);
 			}
 		});
-		PatientValidation.validateAddress(patientEmailTxtBox.toString());
-		PatientValidation.validatePhone(patientPhoneNumTxtBox.toString());
-		PatientValidation.validateLastName(patientLastNameTxtBox.toString());
-		PatientValidation.validateLastName(lblLastName.toString());
-		PatientValidation.validateFirstName(patientFirstNameTxtBox.toString());
+		
+		//create required fields map
+		requiredTextFields.put("First Name", patientFirstNameTxtBox);
+		requiredTextFields.put("Last Name", patientLastNameTxtBox);
+		requiredTextFields.put("Phone", patientPhoneNumTxtBox);
+		requiredTextFields.put("Email", patientEmailTxtBox);
+		requiredTextFields.put("Address", patientAddressTextArea);
 		
 		//update patients table
 		updateTable();

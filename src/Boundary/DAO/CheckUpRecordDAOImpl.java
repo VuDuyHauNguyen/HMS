@@ -2,7 +2,6 @@ package Boundary.DAO;
 
 import java.util.ArrayList;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -32,7 +31,7 @@ public class CheckUpRecordDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			System.err.println(hx.getMessage());
 		}finally {
@@ -61,7 +60,7 @@ public class CheckUpRecordDAOImpl {
 			checkUpRecords = (ArrayList<CheckUpRecord>) 
 					sx.createQuery("FROM CheckUpRecord ORDER BY checkUpRecordTime").list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -95,7 +94,7 @@ public class CheckUpRecordDAOImpl {
 					})
 					.list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -129,7 +128,7 @@ public class CheckUpRecordDAOImpl {
 					})
 					.list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -163,7 +162,7 @@ public class CheckUpRecordDAOImpl {
 					})
 					.list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -189,7 +188,7 @@ public class CheckUpRecordDAOImpl {
 			//get checkUpRecord
 			checkUpRecord = sx.get(CheckUpRecord.class, id);
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -228,7 +227,7 @@ public class CheckUpRecordDAOImpl {
 				checkUpRecord = null;
 			
 			tx.commit();
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			System.err.println(hx.getMessage());
 		}finally {
@@ -258,7 +257,7 @@ public class CheckUpRecordDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());
