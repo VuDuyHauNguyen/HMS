@@ -3,7 +3,6 @@ package Boundary.DAO;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -33,7 +32,7 @@ public class EmployeeDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			System.err.println(hx.getMessage());
 		}finally {
@@ -59,7 +58,7 @@ public class EmployeeDAOImpl {
 			//get employee
 			employee = sx.get(Employee.class, id);
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -88,7 +87,7 @@ public class EmployeeDAOImpl {
 			employees = (ArrayList<Employee>) 
 					sx.createQuery("FROM Employee E WHERE E.email = '" + email+"'").list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -117,7 +116,7 @@ public class EmployeeDAOImpl {
 			employees = (ArrayList<Employee>) 
 					sx.createQuery("FROM Employee").list(); 
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			System.err.println(hx.getMessage());
 		}finally {
 			sx.close();
@@ -147,7 +146,7 @@ public class EmployeeDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());
@@ -178,7 +177,7 @@ public class EmployeeDAOImpl {
 			
 			tx.commit();
 			
-		}catch(HibernateException hx) {
+		}catch(Exception hx) {
 			if(tx != null) tx.rollback();
 			result = false;
 			System.err.println(hx.getMessage());

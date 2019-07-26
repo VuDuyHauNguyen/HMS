@@ -13,8 +13,8 @@ import javax.swing.text.JTextComponent;
 import com.toedter.calendar.JDateChooser;
 
 import Boundary.MainForm;
-import Boundary.DAO.EmployeeDAOImpl;
 import Boundary.Helpers.GUIHelper;
+import Controller.EmployeeController;
 import Controller.ValidationUserInput;
 import Entity.Employee;
 
@@ -45,7 +45,7 @@ public class EmployeeTabGUI extends JPanel {
 	
 	private JDateChooser empDob;
 	
-	private JComboBox comboBoxGender, comboBoxRole;
+	private JComboBox<String> comboBoxGender, comboBoxRole;
 	
 	private JCheckBox chckbxDisable;
 	
@@ -57,8 +57,6 @@ public class EmployeeTabGUI extends JPanel {
 	
 	private Map<String, JTextComponent> requiredTextFields = new HashMap<String, JTextComponent>();
 	
-	private EmployeeDAOImpl employeeDAO = new EmployeeDAOImpl();
-	
 	private void updateTable() {
 		//remove listener
 		tableEmployees.getSelectionModel().removeListSelectionListener(lsl);
@@ -68,11 +66,11 @@ public class EmployeeTabGUI extends JPanel {
 				"DOB", "Gender", "Email", "Phone", "Address", "Password"};
 		
 		//create a DefaultTableModel object
-		tm = GUIHelper.populateTableModel(columnNames, employeeDAO.getAllEmployees());
+		tm = GUIHelper.populateTableModel(columnNames, EmployeeController.getAllEmployees());
 		
 		tableEmployees.setModel(tm);
 		
-		tableEmployees.setRowSorter(new TableRowSorter(tm));
+		tableEmployees.setRowSorter(new TableRowSorter<DefaultTableModel>(tm));
 		
 		//add listener
 		tableEmployees.getSelectionModel().addListSelectionListener(lsl);
@@ -179,7 +177,7 @@ public class EmployeeTabGUI extends JPanel {
 				int currId = (int) tableEmployees.getValueAt(tableEmployees.getSelectedRow(), 0);//1st column
 				
 				//get the employee
-				Employee emp = employeeDAO.getEmployeeById(currId);
+				Employee emp = EmployeeController.getEmployeeById(currId);
 				
 				updateCurrentEmployeeInfo(emp);
 				
@@ -266,7 +264,7 @@ public class EmployeeTabGUI extends JPanel {
 		empDob.setBounds(93, 159, 116, 22);
 		panel.add(empDob);
 		
-		comboBoxGender = new JComboBox();
+		comboBoxGender = new JComboBox<String>();
 		comboBoxGender.setBounds(93, 133, 116, 20);
 		panel.add(comboBoxGender);
 		comboBoxGender.addItem("Unknown");
@@ -293,7 +291,7 @@ public class EmployeeTabGUI extends JPanel {
 		panel.add(lblEmpRole);
 		lblEmpRole.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		
-		comboBoxRole = new JComboBox();
+		comboBoxRole = new JComboBox<String>();
 		comboBoxRole.setBounds(93, 50, 116, 20);
 		panel.add(comboBoxRole);
 		comboBoxRole.addItem("Receptionist");
@@ -346,18 +344,26 @@ public class EmployeeTabGUI extends JPanel {
 				//check required fields, stop if fail
 				if(validateRequiredFields() == false) return;
 				
+				//get employee from database
+				Employee emp = EmployeeController.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
 				
-				Employee emp = employeeDAO.getEmployeeById(Integer.parseInt(empIdTxtBox.getText()));
-				
-				if(emp ==  null) return;//can not get employee
+				if(emp ==  null) {
+					MainForm.showMessage("Cannot update employee.\nPlease try again!");
+					return;//can not get employee
+				}
 				
 				//update user input data to emp
 				emp = setUserInputDataToEmployee(emp);
 				
-				if(employeeDAO.updateEmployee(emp))
+				//update to database
+				String result = EmployeeController.updateEmployee(emp);
+				
+				if(result.equals(EmployeeController.SUCCESS)) {
+					MainForm.showMessage("Updated successfully");
 					updateTable();
+				}
 				else
-					MainForm.showMessage("Cannot update the employee.\nPlease try again!");
+					MainForm.showMessage(result);
 			}
 		});
 		
@@ -374,17 +380,19 @@ public class EmployeeTabGUI extends JPanel {
 				
 				//set user input data to emp
 				emp = setUserInputDataToEmployee(emp);
-	
-				int newEmpId = employeeDAO.addEmployee(emp);
 				
-				if(newEmpId < 0) {
-					MainForm.showMessage("Cannot create an employee.\nPlease check email existence and try again!");
-					empEmailTxtBox.requestFocus();//focus email field
-					empIdTxtBox.setText("");//clear Id
-				}else {
+				String result = EmployeeController.addEmployee(emp);
+				
+				if(result.equals(EmployeeController.SUCCESS)) {
+					MainForm.showMessage("Added successfully!");
+					
+					//update UI
 					updateTable();
 					clearForm();
+				}else {
+					MainForm.showMessage(result);
 				}
+					
 			}
 		});
 		
