@@ -20,7 +20,7 @@ import Boundary.Helpers.DateTimeHelper;
  * This will range from the an appointment
  * id number, to the status of an appointment.
  * 
- * @author Beau Lee (300010635)
+ * @author Beau (300010635)
  *
  */
 
