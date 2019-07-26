@@ -5,8 +5,6 @@ import java.util.Map;
 
 import javax.swing.text.JTextComponent;
 
-import Boundary.MainForm; 
-
 public class ValidationUserInput { 
      
     public static final String VALID = "Valid Input"; 

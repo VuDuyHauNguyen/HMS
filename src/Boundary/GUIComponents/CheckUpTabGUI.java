@@ -13,9 +13,9 @@ import javax.swing.table.TableRowSorter;
 
 
 import Boundary.MainForm;
-import Boundary.DAO.CheckUpRecordDAOImpl;
 import Boundary.Helpers.GUIHelper;
 import Controller.Authentication;
+import Controller.CheckUpRecordController;
 import Entity.CheckUpRecord;
 
 import javax.swing.JScrollPane;
@@ -37,7 +37,6 @@ public class CheckUpTabGUI extends JPanel {
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
-	private CheckUpRecordDAOImpl checkUpRecordDAO = new CheckUpRecordDAOImpl(); 
 	
 	private CheckUpRecord currentCheckUpRecord = null;
 	private JTextField statusTxtBox;
@@ -52,11 +51,11 @@ public class CheckUpTabGUI extends JPanel {
 		
 		//create a DefaultTableModel object
 		tm = GUIHelper.populateTableModel(columnNames, 
-				checkUpRecordDAO.getAllCheckUpRecordsInQueueOrInProgress());
+				CheckUpRecordController.getAllCheckUpRecordsInQueueOrInProgress());
 		
 		tableCheckUpInQueue.setModel(tm);
 		
-		tableCheckUpInQueue.setRowSorter(new TableRowSorter(tm));
+		tableCheckUpInQueue.setRowSorter(new TableRowSorter<DefaultTableModel>(tm));
 		
 		//add listener
 		tableCheckUpInQueue.getSelectionModel().addListSelectionListener(lsl);
@@ -221,7 +220,7 @@ public class CheckUpTabGUI extends JPanel {
 				int currId = (int) tableCheckUpInQueue.getValueAt(tableCheckUpInQueue.getSelectedRow(), 0);//1st column
 				
 				//get the checkUpRecord
-				currentCheckUpRecord = checkUpRecordDAO.getCheckUpRecordInQueueById(currId);
+				currentCheckUpRecord = CheckUpRecordController.getCheckUpRecordInQueueById(currId);
 				
 				//check if currenCheckUp is available
 				if(currentCheckUpRecord == null) 
@@ -262,17 +261,23 @@ public class CheckUpTabGUI extends JPanel {
 				currentCheckUpRecord.setStatus(CheckUpRecord.STATUS_QUEUE);
 				
 				//save to database
-				if(checkUpRecordDAO.updateCheckUpRecord(currentCheckUpRecord)) {
+				String result = CheckUpRecordController.cancelCheckUpRecord(currentCheckUpRecord);
+				
+				if(result.equals(CheckUpRecordController.SUCCESS)) {
+					
+					MainForm.showMessage("Canceled successfully!");
 					
 					//reset UIs
 					clearForm();
 					updateTable();
 				}else {
-					MainForm.showMessage("Cannot return the patient to the queue.\nPlease try again!");
+					MainForm.showMessage(result);
 				}
 					
 			}
 		});
+		
+		//done check up
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -281,36 +286,26 @@ public class CheckUpTabGUI extends JPanel {
 					return;
 				}
 				
-				//get require fields
-				String medicalProblems = medicalProblemsTextArea.getText().toString();
-				String checkupResult = checkUpResultTextArea.getText().toString();
-				String prescriptions = prescriptionsTextArea.getText().toString();
-				
-				//check require fields
-				if(medicalProblems.equals("") ||
-						checkupResult.equals("") ||
-						prescriptions.equals("")) {
-					
-					MainForm.showMessage("Please fill all required information and try again!");
-					return;
-				}
-				
 				//fill data to currentCheckUpRecord
-				currentCheckUpRecord.setMedicalProblem(medicalProblems);
-				currentCheckUpRecord.setCheckupResult(checkupResult);
-				currentCheckUpRecord.setPrescriptions(prescriptions);
+				currentCheckUpRecord.setMedicalProblem(medicalProblemsTextArea.getText().toString());
+				currentCheckUpRecord.setCheckupResult(checkUpResultTextArea.getText().toString());
+				currentCheckUpRecord.setPrescriptions(prescriptionsTextArea.getText().toString());
 				currentCheckUpRecord.setStatus(CheckUpRecord.STATUS_DONE);
 				currentCheckUpRecord.setDoctor(Authentication.getLoggedInEmployee());
 				currentCheckUpRecord.setCheckUpRecordTime(new Date());
 				
 				//save to database
-				if(checkUpRecordDAO.updateCheckUpRecord(currentCheckUpRecord)) {
+				String result = CheckUpRecordController.finishCheckUpRecord(currentCheckUpRecord);
+				
+				if(result.equals(CheckUpRecordController.SUCCESS)) {
+					
+					MainForm.showMessage("Finished successfully!");
 					
 					//reset UIs
 					clearForm();
 					updateTable();
 				}else {
-					MainForm.showMessage("Cannot save check up record.\nPlease try again!");
+					MainForm.showMessage(result);
 				}
 					
 			}

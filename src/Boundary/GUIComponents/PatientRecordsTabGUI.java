@@ -12,8 +12,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import Boundary.MainForm;
-import Boundary.DAO.CheckUpRecordDAOImpl;
 import Boundary.Helpers.GUIHelper;
+import Controller.CheckUpRecordController;
+import Controller.ValidationUserInput;
 import Entity.CheckUpRecord;
 
 import javax.swing.JScrollPane;
@@ -35,7 +36,6 @@ public class PatientRecordsTabGUI extends JPanel {
 	
 	private DefaultTableModel tm;
 	private ListSelectionListener lsl;
-	private CheckUpRecordDAOImpl checkUpRecordDAO = new CheckUpRecordDAOImpl(); 
 	
 	private CheckUpRecord currentCheckUpRecord = null;
 	
@@ -204,7 +204,7 @@ public class PatientRecordsTabGUI extends JPanel {
 				int currId = (int) tableCheckUpRecords.getValueAt(tableCheckUpRecords.getSelectedRow(), 0);//1st column
 				
 				//get the checkUpRecord
-				currentCheckUpRecord = checkUpRecordDAO.getCheckUpRecordById(currId);
+				currentCheckUpRecord = CheckUpRecordController.getCheckUpRecordById(currId);
 				
 				//check if currenCheckUp is available
 				if(currentCheckUpRecord == null) 
@@ -236,16 +236,17 @@ public class PatientRecordsTabGUI extends JPanel {
 		btnSearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//get patient id
-				int patientId = 0;
+				//check and validate field
+				String result = ValidationUserInput.validateRequiredPositiveNumberField(
+						"Patient Id", searchByPatientIdTxtBox.getText().toString());
 				
-				try { 
-					patientId = Integer.parseInt(searchByPatientIdTxtBox.getText().toString());
+				if(result.equals(ValidationUserInput.VALID)) {
 					
-					updateTable(checkUpRecordDAO.getAllCheckUpRecordsByPatientId(patientId));
-				}catch(Exception ex) {
-					MainForm.showMessage("Patient Id must be a positive number and cannot be empty.\nPlease try again!");
-				}
+					updateTable(CheckUpRecordController.getAllCheckUpRecordsByPatientId(
+							Integer.parseInt(searchByPatientIdTxtBox.getText().toString())));
+				}else
+					MainForm.showMessage(result);
+					
 				
 			}
 		});
@@ -255,11 +256,11 @@ public class PatientRecordsTabGUI extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				
 				//reset UIs
-				updateTable(checkUpRecordDAO.getAllHistoryCheckUpRecords());
+				updateTable(CheckUpRecordController.getAllHistoryCheckUpRecords());
 			}
 		});
 
 		clearForm();
-		updateTable(checkUpRecordDAO.getAllHistoryCheckUpRecords());
+		updateTable(CheckUpRecordController.getAllHistoryCheckUpRecords());
 	}
 }
