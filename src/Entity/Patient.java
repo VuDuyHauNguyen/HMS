@@ -176,4 +176,32 @@ public class Patient implements Vectorable{
 		return v;
 	}
 	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("Patient Info");
+		sb.append(System.lineSeparator());
+		sb.append("ID: " + id);
+		sb.append(System.lineSeparator());
+		sb.append("Name: " + firstName + ", " + lastName);
+		sb.append(System.lineSeparator());
+		
+		for (Map.Entry<String, Character> genderEntry : GENDER_MAP.entrySet()) {
+			if(gender == genderEntry.getValue()) {
+				
+				sb.append("Gender: " + genderEntry.getKey());
+				break;
+			}
+		}
+		sb.append(System.lineSeparator());
+		sb.append("Phone: " + phone);
+		sb.append(System.lineSeparator());
+		sb.append("Email: " + email);
+		sb.append(System.lineSeparator());
+		sb.append("Address: " + address);
+		
+		return sb.toString();
+	}
 }

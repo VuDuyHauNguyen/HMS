@@ -53,7 +53,7 @@ public class AppointmentTabGUI extends JPanel {
 	private JTextField statusTxtBox;
 	JTextArea textAreaMedicalProblems;
 	
-	private JButton btnAdd, btnClear, btnUpdate, btnCancel, btnEnterCheckUp;
+	private JButton btnAdd, btnClear, btnUpdate, btnCancel, btnEnterCheckUp, btnViewPatient, btnViewReceptionist;
 	
 	private Appointment currentAppointment = null;
 
@@ -97,7 +97,8 @@ public class AppointmentTabGUI extends JPanel {
 		
 		//setup buttons
 		GUIHelper.enableButtons(new JButton[] {btnAdd});
-		GUIHelper.disableButtons(new JButton[] {btnUpdate, btnCancel, btnEnterCheckUp});
+		GUIHelper.disableButtons(new JButton[] {btnUpdate, btnCancel, btnEnterCheckUp, 
+				btnViewPatient, btnViewReceptionist});
 		
 		//reset currentAppointment
 		currentAppointment = null;
@@ -161,7 +162,7 @@ public class AppointmentTabGUI extends JPanel {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Manage Appointments", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(747, 3, 220, 346);
+		panel.setBounds(747, 3, 220, 375);
 		add(panel);
 		panel.setLayout(null);
 			
@@ -229,7 +230,7 @@ public class AppointmentTabGUI extends JPanel {
 		
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Check In", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(747, 360, 215, 136);
+		panel_1.setBounds(747, 380, 215, 136);
 		add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -249,7 +250,7 @@ public class AppointmentTabGUI extends JPanel {
 		//Buttons setup
 		btnAdd = new JButton("Add");
 		btnAdd.setForeground(Color.GREEN);
-		btnAdd.setBounds(128, 310, 86, 29);
+		btnAdd.setBounds(128, 335, 86, 29);
 		panel.add(btnAdd);
 		
 		btnUpdate = new JButton("Update");
@@ -258,7 +259,7 @@ public class AppointmentTabGUI extends JPanel {
 		panel.add(btnUpdate);
 		
 		btnClear = new JButton("Clear Form");
-		btnClear.setBounds(6, 310, 115, 29);
+		btnClear.setBounds(6, 335, 115, 29);
 		panel.add(btnClear);
 		
 		btnCancel = new JButton("Cancel");
@@ -266,6 +267,33 @@ public class AppointmentTabGUI extends JPanel {
 		btnCancel.setForeground(Color.RED);
 		btnCancel.setBounds(6, 216, 86, 29);
 		panel.add(btnCancel);
+		
+		btnViewPatient = new JButton("Patient");
+		btnViewPatient.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(currentAppointment != null && currentAppointment.getPatient() != null)
+					MainForm.showMessage(currentAppointment.getPatient().toString());
+			}
+		});
+		btnViewPatient.setBounds(98, 285, 116, 29);
+		panel.add(btnViewPatient);
+		
+		btnViewReceptionist = new JButton("Receptionist");
+		btnViewReceptionist.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				if(currentAppointment != null && currentAppointment.getReceptionist() != null)
+					MainForm.showMessage(currentAppointment.getReceptionist().toString());
+			}
+		});
+		btnViewReceptionist.setBounds(98, 250, 116, 29);
+		panel.add(btnViewReceptionist);
+		
+		JLabel lblView = new JLabel("View:");
+		lblView.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblView.setBounds(6, 266, 86, 13);
+		panel.add(lblView);
 		
 		btnEnterCheckUp = new JButton("Enter Check Up");
 		
@@ -305,6 +333,7 @@ public class AppointmentTabGUI extends JPanel {
 						break;
 				}
 				
+				GUIHelper.enableButtons(new JButton[] {btnViewPatient, btnViewReceptionist});
 				
 				updateCurrentAppointmentInfo(currentAppointment);
 				tableAppointment.setEnabled(true);//enable table

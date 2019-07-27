@@ -40,7 +40,7 @@ public class CheckUpTabGUI extends JPanel {
 	
 	private CheckUpRecord currentCheckUpRecord = null;
 	private JTextField statusTxtBox;
-	private JButton btnCancel, btnDone;
+	private JButton btnCancel, btnDone, btnViewPatient;
 	
 	public void updateTable() {
 		//remove listener
@@ -82,7 +82,7 @@ public class CheckUpTabGUI extends JPanel {
 		prescriptionsTextArea.setText("");
 		
 		//setup buttons
-		GUIHelper.disableButtons(new JButton[] {btnCancel, btnDone});
+		GUIHelper.disableButtons(new JButton[] {btnCancel, btnDone, btnViewPatient});
 		
 		currentCheckUpRecord = null;//reset currentCheckUpRecord
 	}
@@ -101,7 +101,7 @@ public class CheckUpTabGUI extends JPanel {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Perform Check Up", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(747, 3, 220, 422);
+		panel.setBounds(747, 3, 220, 494);
 		add(panel);
 		panel.setLayout(null);
 			
@@ -140,12 +140,12 @@ public class CheckUpTabGUI extends JPanel {
 		
 		btnDone = new JButton("Done");
 		btnDone.setForeground(Color.GREEN);
-		btnDone.setBounds(114, 377, 100, 29);
+		btnDone.setBounds(114, 450, 100, 29);
 		panel.add(btnDone);
 		
 		btnCancel = new JButton("Cancel");
 		btnCancel.setForeground(Color.RED);
-		btnCancel.setBounds(6, 377, 100, 29);
+		btnCancel.setBounds(6, 450, 100, 29);
 		panel.add(btnCancel);
 		
 		JLabel medicalProblemslbl = new JLabel("Medical Problems:");
@@ -227,7 +227,7 @@ public class CheckUpTabGUI extends JPanel {
 					MainForm.showMessage("The patient is checked-up by other doctor!");
 				else {
 					//setup buttons
-					GUIHelper.enableButtons(new JButton[] {btnCancel, btnDone});
+					GUIHelper.enableButtons(new JButton[] {btnCancel, btnDone, btnViewPatient});
 					updateCurrentCheckUpInfo(currentCheckUpRecord);
 				}
 				
@@ -244,8 +244,24 @@ public class CheckUpTabGUI extends JPanel {
 			}
 		});
 		btnRefreshCheckUp.setForeground(Color.BLUE);
-		btnRefreshCheckUp.setBounds(6, 342, 208, 29);
+		btnRefreshCheckUp.setBounds(6, 415, 208, 29);
 		panel.add(btnRefreshCheckUp);
+		
+		JLabel label = new JLabel("View:");
+		label.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		label.setBounds(6, 354, 86, 13);
+		panel.add(label);
+		
+		btnViewPatient = new JButton("Patient");
+		btnViewPatient.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(currentCheckUpRecord != null && currentCheckUpRecord.getPatient() != null)
+					MainForm.showMessage(currentCheckUpRecord.getPatient().toString());
+			}
+		});
+		btnViewPatient.setBounds(98, 345, 116, 29);
+		panel.add(btnViewPatient);
 
 		
 		btnCancel.addActionListener(new ActionListener() {

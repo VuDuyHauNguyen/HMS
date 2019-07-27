@@ -40,7 +40,7 @@ public class PatientRecordsTabGUI extends JPanel {
 	private CheckUpRecord currentCheckUpRecord = null;
 	
 	private JTextField statusTxtBox;
-	private JButton btnSearch;
+	private JButton btnSearch, btnViewPatient, btnViewDoctor;
 	private JTextField searchByPatientIdTxtBox;
 	
 	public void updateTable(ArrayList<CheckUpRecord> checkUpRecordsToDisplay) {
@@ -87,6 +87,9 @@ public class PatientRecordsTabGUI extends JPanel {
 		prescriptionsTextArea.setText("");
 		
 		currentCheckUpRecord = null;//reset currentCheckUpRecord
+		
+		//setup buttons
+		GUIHelper.disableButtons(new JButton[] {btnViewPatient, btnViewDoctor});
 	}
 	
 	public PatientRecordsTabGUI() {
@@ -103,7 +106,7 @@ public class PatientRecordsTabGUI extends JPanel {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Patient Record Detail", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel.setBounds(747, 50, 220, 344);
+		panel.setBounds(747, 50, 220, 425);
 		add(panel);
 		panel.setLayout(null);
 			
@@ -194,17 +197,54 @@ public class PatientRecordsTabGUI extends JPanel {
 		statusTxtBox.setBounds(98, 102, 116, 22);
 		panel.add(statusTxtBox);
 		
+		JLabel label = new JLabel("View:");
+		label.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		label.setBounds(6, 355, 86, 13);
+		panel.add(label);
+		
+		btnViewDoctor = new JButton("Doctor");
+		btnViewDoctor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(currentCheckUpRecord != null && currentCheckUpRecord.getDoctor() != null)
+					MainForm.showMessage(currentCheckUpRecord.getDoctor().toString());
+			}
+		});
+		btnViewDoctor.setBounds(98, 346, 116, 29);
+		panel.add(btnViewDoctor);
+		
+		btnViewPatient = new JButton("Patient");
+		btnViewPatient.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(currentCheckUpRecord != null && currentCheckUpRecord.getPatient() != null)
+					MainForm.showMessage(currentCheckUpRecord.getPatient().toString());
+			}
+		});
+		btnViewPatient.setBounds(98, 381, 116, 29);
+		panel.add(btnViewPatient);
+		
 		//create lsl
 		lsl = new ListSelectionListener() {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				
+				tableCheckUpRecords.setEnabled(false);
+
+				//setup buttons
+				GUIHelper.enableButtons(new JButton[] {btnViewPatient});
+				
 				//else try to find the selected checkUpRecord	
 				int currId = (int) tableCheckUpRecords.getValueAt(tableCheckUpRecords.getSelectedRow(), 0);//1st column
 				
 				//get the checkUpRecord
 				currentCheckUpRecord = CheckUpRecordController.getCheckUpRecordById(currId);
+				
+				if(currentCheckUpRecord.getDoctor() == null)
+					GUIHelper.disableButtons(new JButton[] {btnViewDoctor});
+				else
+					GUIHelper.enableButtons(new JButton[] {btnViewDoctor});
 				
 				//check if currenCheckUp is available
 				if(currentCheckUpRecord == null) 
@@ -213,6 +253,7 @@ public class PatientRecordsTabGUI extends JPanel {
 					updateCurrentAppointmentInfo(currentCheckUpRecord);
 				}
 				
+				tableCheckUpRecords.setEnabled(true);
 			}
 		};
 		
@@ -228,7 +269,7 @@ public class PatientRecordsTabGUI extends JPanel {
 		btnSearch.setForeground(Color.BLACK);
 		
 		JButton btnRefreshCheckUp = new JButton("Refresh Patient Records");
-		btnRefreshCheckUp.setBounds(753, 400, 208, 29);
+		btnRefreshCheckUp.setBounds(753, 480, 208, 29);
 		add(btnRefreshCheckUp);
 		btnRefreshCheckUp.setForeground(Color.BLUE);
 		
